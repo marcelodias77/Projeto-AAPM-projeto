@@ -9,4 +9,4 @@ from app.models import venda
 # Gerar a migration
 # python -m alembic revision --autogenerate -m "criar tabelas categorias e produtos"
 
-# python -m alembic upgrade head
+# python -m alembic upgrade head #
