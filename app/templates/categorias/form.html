@@ -1,52 +1,240 @@
-<!-- templates/categorias/form.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ "Editar" if editando else "Nova" }} Categoria — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --input-focus: #80bdff;
+            
+            /* Status e Alertas */
+            --danger: #c62828;
+            --danger-bg: #ffebee;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px; /* Formulários ficam melhores mais estreitos */
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* --- ALERTAS / FEEDBACKS --- */
+        .alert-danger {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid rgba(198, 40, 40, 0.2);
+        }
+
+        /* --- ESTILIZAÇÃO DO FORMULÁRIO --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 1rem;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: #fafafa;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+        }
+
+        /* --- BOTÕES DE AÇÃO --- */
+        .actions-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 11px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-cancel {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            color: #333333;
+            text-decoration: underline;
+        }
+
+        /* --- SEÇÃO DE PRODUTOS VINCULADOS --- */
+        hr {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 30px 0 20px 0;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .products-list {
+            list-style: none;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+
+        .products-list li {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .products-list li:last-child {
+            border-bottom: none;
+        }
+
+        .products-list a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .products-list a:hover {
+            text-decoration: underline;
+        }
+
+        .empty-list {
+            font-style: italic;
+            color: var(--text-muted) !important;
+            display: block;
+            text-align: center;
+            padding: 15px !important;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ "Editar categoria" if editando else "Nova categoria" }}</h1>
 
-    {% if erro %}
-        <p style="color:red">{{ erro }}</p>
-    {% endif %}
+    <div class="container">
+        <h1>{{ "Editar categoria" if editando else "Nova categoria" }}</h1>
 
-    <form action="{{ '/categorias/' + editando.id|string + '/editar' if editando else '/categorias/nova' }}"
-          method="post">
+        {% if erro %}
+            <div class="alert alert-danger">{{ erro }}</div>
+        {% endif %}
 
-        <label>Nome:
-            <input type="text"
-                   name="nome"
-                   value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
-                   required
-                   autofocus>
-        </label>
-        <br>
+        <form action="{{ '/categorias/' + editando.id|string + '/editar' if editando else '/categorias/nova' }}" method="post">
+            
+            <div class="form-group">
+                <label for="nome">Nome da Categoria</label>
+                <input type="text"
+                       id="nome"
+                       name="nome"
+                       value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
+                       required
+                       autofocus
+                       placeholder="Ex: Alimentos, Papelaria...">
+            </div>
 
-        <button type="submit">
-            {{ "Salvar alterações" if editando else "Criar categoria" }}
-        </button>
-        <a href="/categorias">Cancelar</a>
-    </form>
+            <div class="actions-group">
+                <button type="submit" class="btn-submit">
+                    {{ "Salvar alterações" if editando else "Criar categoria" }}
+                </button>
+                <a href="/categorias" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
 
-    <!--
-        Na edição, exibe os produtos vinculados para o admin
-        ter contexto antes de fazer alterações.
-    -->
-    {% if editando and editando.produtos %}
-        <hr>
-        <h3>Produtos vinculados a esta categoria</h3>
-        <ul>
-            {% for p in editando.produtos if p.ativo %}
-                <li>
-                    <a href="/produtos/{{ p.id }}">{{ p.nome }}</a>
-                    — R$ {{ "%.2f"|format(p.preco) }}
-                </li>
-            {% else %}
-                <li>Nenhum produto ativo vinculado.</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        {% if editando and editando.produtos %}
+            <hr>
+            <h3>Produtos vinculados a esta categoria</h3>
+            <ul class="products-list">
+                {% for p in editando.produtos if p.ativo %}
+                    <li>
+                        <a href="/produtos/{{ p.id }}">{{ p.nome }}</a>
+                        <span>R$ {{ "%.2f"|format(p.preco) }}</span>
+                    </li>
+                {% else %}
+                    <li class="empty-list">Nenhum produto ativo vinculado.</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
 </body>
 </html>

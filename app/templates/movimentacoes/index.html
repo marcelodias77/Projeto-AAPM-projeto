@@ -2,90 +2,306 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movimentações — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            
+            /* Status e Badges */
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --danger: #c62828;
+            --danger-bg: #ffebee;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px; /* Um pouco mais larga devido ao número de colunas */
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* --- BARRA DE FILTROS ALINHADA --- */
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .filter-form select {
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: #ffffff;
+            outline: none;
+            min-width: 180px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .filter-form select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-filter {
+            background-color: #555555;
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .btn-filter:hover {
+            background-color: #333333;
+        }
+
+        .btn-clear {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        .btn-clear:hover {
+            color: var(--danger);
+            text-decoration: underline;
+        }
+
+        /* --- LINKS E BOTÕES DE CADASTRO --- */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--primary);
+            color: #ffffff !important;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* --- TABELA E HISTÓRICO --- */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fdfdfd;
+        }
+
+        /* Badges de Operação de Estoque */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-entrada {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+        .badge-saida {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        /* Estilização para as células numéricas */
+        .monospace {
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9rem;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 35px !important;
+            font-style: italic;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--text-muted);
+        }
+    </style>
 </head>
 <body>
-    <h1>Histórico de movimentações</h1>
 
-    <form method="get" action="/movimentacoes">
-        <select name="produto_id">
-            <option value="0">Todos os produtos</option>
-            {% if produtos %}
-                {% for p in produtos %}
-                    <option value="{{ p.id }}"
-                        {{ 'selected' if produto_id == p.id else '' }}}>
-                        {{ p.nome }}
-                    </option>
-                {% endfor %}
+    <div class="container">
+        <h1>Histórico de movimentações</h1>
+
+        <form method="get" action="/movimentacoes" class="filter-form">
+            <select name="produto_id">
+                <option value="0">Todos os produtos</option>
+                {% if produtos %}
+                    {% for p in produtos %}
+                        <option value="{{ p.id }}" {{ 'selected' if produto_id == p.id else '' }}>
+                            {{ p.nome }}
+                        </option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+
+            <select name="tipo">
+                <option value="">Todos os tipos</option>
+                <option value="entrada" {{ 'selected' if tipo == 'entrada' else '' }}>Entrada</option>
+                <option value="saida" {{ 'selected' if tipo == 'saida' else '' }}>Saída</option>
+            </select>
+
+            <button type="submit" class="btn-filter">Filtrar</button>
+
+            {% if produto_id or tipo %}
+                <a href="/movimentacoes" class="btn-clear">Limpar Filtros</a>
             {% endif %}
-        </select>
+        </form>
 
-        <select name="tipo">
-            <option value="">Todos os tipos</option>
-            <option value="entrada" {{ 'selected' if tipo == 'entrada' else '' }}>
-                Entrada
-            </option>
-            <option value="saida" {{ 'selected' if tipo == 'saida' else '' }}>
-                Saída
-            </option>
-        </select>
+        <a href="/movimentacoes/nova" class="btn-primary">+ Registrar movimentação</a>
 
-        <button type="submit">Filtrar</button>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data / Hora</th>
+                        <th>Produto</th>
+                        <th>Tipo</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unit.</th>
+                        <th>Total</th>
+                        <th>Observação</th>
+                        <th>Registrado por</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if movimentacoes %}
+                        {% for m in movimentacoes %}
+                        <tr>
+                            <td class="monospace" style="color: #555;">
+                                {{ m.criado_em.strftime('%d/%m/%Y %H:%M') if m.criado_em else '—' }}
+                            </td>
+                            <td>
+                                <a href="/produtos/{{ m.produto_id }}" style="font-weight: 600;">
+                                    {{ m.produto.nome if m.produto else "Produto não encontrado" }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if m.tipo and m.tipo.value == 'entrada' %}
+                                    <span class="badge badge-entrada">▲ Entrada</span>
+                                {% else %}
+                                    <span class="badge badge-saida">▼ Saída</span>
+                                {% endif %}
+                            </td>
+                            <td class="monospace">{{ m.quantidade }}</td>
+                            <td class="monospace">R$ {{ "%.2f"|format(m.preco_unitario) if m.preco_unitario else "0.00" }}</td>
+                            <td class="monospace" style="font-weight: 600; color: #111;">
+                                R$ {{ "%.2f"|format(m.valor_total) if m.valor_total else "0.00" }}
+                            </td>
+                            <td style="color: var(--text-muted); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ m.observacao }}">
+                                {{ m.observacao or "—" }}
+                            </td>
+                            <td>{{ m.usuario.nome if m.usuario else "—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-row">Nenhuma movimentação encontrada para os filtros aplicados.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
 
-        {% if produto_id or tipo %}
-            <a href="/movimentacoes">Limpar</a>
-        {% endif %}
-    </form>
+        <p><a href="/" class="back-link">← Voltar para o Dashboard</a></p>
+    </div>
 
-    <a href="/movimentacoes/nova">+ Registrar movimentação</a>
-
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Produto</th>
-                <th>Tipo</th>
-                <th>Quantidade</th>
-                <th>Preço unit.</th>
-                <th>Total</th>
-                <th>Observação</th>
-                <th>Registrado por</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if movimentacoes %}
-                {% for m in movimentacoes %}
-                <tr>
-                    <td>{{ m.criado_em.strftime('%d/%m/%Y %H:%M') if m.criado_em else '—' }}</td>
-                    <td>
-                        <a href="/produtos/{{ m.produto_id }}">
-                            {{ m.produto.nome if m.produto else "Produto não encontrado" }}
-                        </a>
-                    </td>
-                    <td>
-                        {% if m.tipo and m.tipo.value == 'entrada' %}
-                            <span style="color:green">▲ Entrada</span>
-                        {% else %}
-                            <span style="color:red">▼ Saída</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ m.quantidade }}</td>
-                    <td>R$ {{ "%.2f"|format(m.preco_unitario) if m.preco_unitario else "0.00" }}</td>
-                    <td>R$ {{ "%.2f"|format(m.valor_total) if m.valor_total else "0.00" }}</td>
-                    <td>{{ m.observacao or "—" }}</td>
-                    <td>{{ m.usuario.nome if m.usuario else "—" }}</td>
-                </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="8" style="text-align:center">
-                        Nenhuma movimentação encontrada.
-                    </td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-
-    <p><a href="/">← Dashboard</a></p>
 </body>
 </html>

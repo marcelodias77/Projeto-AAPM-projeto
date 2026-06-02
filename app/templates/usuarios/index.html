@@ -2,62 +2,310 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Usuários — Estoque</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e2e8f0;
+            
+            /* Status */
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --danger: #ef4444;
+            --danger-hover: #b91c1c;
+            --danger-bg: #fee2e2;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* --- CABEÇALHO DA PÁGINA --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #111111;
+        }
+
+        /* --- ALERTAS E FEEDBACKS --- */
+        .alerta {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+
+        .alerta-sucesso {
+            background-color: var(--success-bg);
+            color: var(--success);
+            border-color: rgba(46, 125, 50, 0.15);
+        }
+
+        .alerta-erro {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+
+        /* --- BOTÃO NOVO USUÁRIO --- */
+        .btn-novo {
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary);
+            color: #ffffff !important;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.15);
+        }
+
+        .btn-novo:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* --- TABELA GERENCIAL --- */
+        .tabela-container {
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 14px 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .nome-usuario {
+            font-weight: 600;
+            color: #111111;
+        }
+
+        .email-usuario {
+            color: var(--text-muted);
+            font-family: SFMono-Regular, Consolas, monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Badges de Status e Perfil */
+        .badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-admin {
+            background-color: rgba(0, 102, 204, 0.08);
+            color: var(--primary);
+        }
+
+        .badge-operador {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .badge-ativo {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+
+        .badge-inativo {
+            background-color: #f1f5f9;
+            color: #94a3b8;
+        }
+
+        /* Links e Botões de Ação na Linha */
+        .btn-tabela-editar {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            margin-right: 12px;
+        }
+
+        .btn-tabela-editar:hover {
+            text-decoration: underline;
+        }
+
+        .btn-toggle-status {
+            background: none;
+            border: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            padding: 0;
+            font-family: inherit;
+        }
+
+        .btn-toggle-status.acao-desativar {
+            color: var(--danger);
+        }
+
+        .btn-toggle-status.acao-desativar:hover {
+            color: var(--danger-hover);
+            text-decoration: underline;
+        }
+
+        .btn-toggle-status.acao-ativar {
+            color: var(--success);
+        }
+
+        .btn-toggle-status.acao-ativar:hover {
+            text-decoration: underline;
+        }
+
+        /* Rodapé */
+        .link-voltar {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .link-voltar:hover {
+            color: var(--primary);
+        }
+    </style>
 </head>
 <body>
-    <h1>Usuários</h1>
 
-    <a href="/usuarios/novo">+ Novo usuário</a>
+    <div class="container">
+        
+        <div class="page-header">
+            <h1>Controle de Usuários</h1>
+            <a href="/usuarios/novo" class="btn-novo">+ Novo Usuário</a>
+        </div>
 
-    <!-- Mensagens de feedback via query string -->
-    {% if request.query_params.get('criado') == 'ok' %}
-        <p style="color: green;">Usuário criado com sucesso!</p>
-    {% endif %}
-    {% if request.query_params.get('editado') == 'ok' %}
-        <p style="color: green;">Usuário atualizado com sucesso!</p>
-    {% endif %}
-    {% if request.query_params.get('erro') == 'autoproprio' %}
-        <p style="color: red;">Você não pode desativar sua própria conta.</p>
-    {% endif %}
+        {% if request.query_params.get('criado') == 'ok' %}
+            <div class="alerta alerta-sucesso">✓ Usuário cadastrado com sucesso!</div>
+        {% endif %}
+        
+        {% if request.query_params.get('editado') == 'ok' %}
+            <div class="alerta alerta-sucesso">✓ Alterações salvas com sucesso!</div>
+        {% endif %}
+        
+        {% if request.query_params.get('erro') == 'autoproprio' %}
+            <div class="alerta alerta-erro">⚠️ Erro de segurança: Você não pode desativar sua própria conta conectada.</div>
+        {% endif %}
 
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Perfil</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for u in usuarios %}
-            <tr>
-                <td>{{ u.nome }}</td>
-                <td>{{ u.email }}</td>
-                <td>{{ u.role }}</td>
-                <td>{{ "Ativo" if u.ativo else "Inativo" }}</td>
-                <td>
-                    <a href="/usuarios/{{ u.id }}/editar">Editar</a>
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th>Status</th>
+                        <th style="width: 160px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td class="nome-usuario">{{ u.nome }}</td>
+                        <td class="email-usuario">{{ u.email }}</td>
+                        <td>
+                            {% if u.role == 'admin' %}
+                                <span class="badge badge-admin">Administrador</span>
+                            {% else %}
+                                <span class="badge badge-operador">Operador</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if u.ativo %}
+                                <span class="badge badge-ativo">Ativo</span>
+                            {% else %}
+                                <span class="badge badge-inativo">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/usuarios/{{ u.id }}/editar" class="btn-tabela-editar">Editar</a>
 
-                    <!--
-                        Usamos um form com POST para ações destrutivas.
-                        Links GET podem ser acionados acidentalmente
-                        (pré-fetch do browser, bots, etc.)
-                    -->
-                    <form action="/usuarios/{{ u.id }}/toggle-ativo"
-                          method="post"
-                          style="display:inline">
-                        <button type="submit">
-                            {{ "Desativar" if u.ativo else "Ativar" }}
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                            <form action="/usuarios/{{ u.id }}/toggle-ativo"
+                                  method="post"
+                                  style="display:inline"
+                                  onsubmit="return confirm('Deseja alterar o status de acesso para {{ u.nome }}?')">
+                                
+                                {% if u.ativo %}
+                                    <button type="submit" class="btn-toggle-status acao-desativar">Desativar</button>
+                                {% else %}
+                                    <button type="submit" class="btn-toggle-status acao-ativar">Ativar</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <p><a href="/">← Voltar ao dashboard</a></p>
+        <p><a href="/" class="link-voltar">← Voltar para o Dashboard</a></p>
+    </div>
+
 </body>
 </html>

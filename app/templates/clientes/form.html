@@ -1,47 +1,234 @@
-<!-- templantes/clientes/form.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
-<head><meta charset="UTF-8">
-<title>{{ "Editar" if editando else "Novo" }} Cliente — AAPM SENAI</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ "Editar" if editando else "Novo" }} Cliente — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            
+            /* Status e Alertas */
+            --danger: #c62828;
+            --danger-bg: #ffebee;
+            --success-light: #e8f5e9;
+            --success-text: #2e7d32;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px; /* Alinhado ao padrão de formulários do sistema */
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* --- ALERTAS / FEEDBACKS --- */
+        .alert-danger {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid rgba(198, 40, 40, 0.2);
+        }
+
+        /* --- ESTILIZAÇÃO DO FORMULÁRIO --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label.field-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 1rem;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: #fafafa;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+        }
+
+        /* Caixa de Destaque para o Checkbox */
+        .checkbox-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background-color: var(--success-light);
+            color: var(--success-text);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            user-select: none;
+        }
+
+        .checkbox-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--success-text); /* Muda a cor interna da caixinha */
+            cursor: pointer;
+        }
+
+        /* --- BOTÕES DE AÇÃO --- */
+        .actions-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 11px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-cancel {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            color: #333333;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ "Editar cliente" if editando else "Novo cliente" }}</h1>
 
-    {% if erro %}<p style="color:red">{{ erro }}</p>{% endif %}
-    {% if request.query_params.get('erro') == 'matricula' %}
-        <p style="color:red">Esta matrícula já está em uso.</p>
-    {% endif %}
+    <div class="container">
+        <h1>{{ "Editar cliente" if editando else "Novo cliente" }}</h1>
 
-    <form action="{{ '/clientes/' + editando.id|string + '/editar' if editando else '/clientes/novo' }}"
-          method="post">
+        {% if erro %}
+            <div class="alert alert-danger">{{ erro }}</div>
+        {% endif %}
+        {% if request.query_params.get('erro') == 'matricula' %}
+            <div class="alert alert-danger">Esta matrícula já está em uso.</div>
+        {% endif %}
 
-        <label>Nome completo:
-            <input type="text" name="nome" required autofocus
-                   value="{{ editando.nome if editando else (valores.nome if valores else '') }}">
-        </label><br>
+        <form action="{{ '/clientes/' + editando.id|string + '/editar' if editando else '/clientes/novo' }}" method="post">
+            
+            <div class="form-group">
+                <label for="nome" class="field-label">Nome completo</label>
+                <input type="text" 
+                       id="nome" 
+                       name="nome" 
+                       required 
+                       autofocus
+                       value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
+                       placeholder="Digite o nome completo do cliente">
+            </div>
 
-        <label>Matrícula SENAI (opcional):
-            <input type="text" name="matricula"
-                   placeholder="Ex: 2024001"
-                   value="{{ editando.matricula if editando else (valores.matricula if valores else '') }}">
-        </label><br>
+            <div class="form-group">
+                <label for="matricula" class="field-label">Matrícula SENAI <span style="font-weight: normal; color: var(--text-muted);">(opcional)</span></label>
+                <input type="text" 
+                       id="matricula" 
+                       name="matricula"
+                       placeholder="Ex: 2024001"
+                       value="{{ editando.matricula if editando else (valores.matricula if valores else '') }}">
+            </div>
 
-        <label>Telefone (opcional):
-            <input type="text" name="telefone"
-                   placeholder="Ex: (11) 99999-9999"
-                   value="{{ editando.telefone if editando else (valores.telefone if valores else '') }}">
-        </label><br>
+            <div class="form-group">
+                <label for="telefone" class="field-label">Telefone <span style="font-weight: normal; color: var(--text-muted);">(opcional)</span></label>
+                <input type="text" 
+                       id="telefone" 
+                       name="telefone"
+                       placeholder="Ex: (11) 99999-9999"
+                       value="{{ editando.telefone if editando else (valores.telefone if valores else '') }}">
+            </div>
 
-        <label>
-            <input type="checkbox" name="is_associado" value="true"
-                {{ 'checked' if (editando and editando.is_associado) or (valores and valores.is_associado) }}>
-            É associado AAPM (recebe 10% de desconto)
-        </label><br><br>
+            <div class="form-group">
+                <label class="checkbox-card" for="is_associado">
+                    <input type="checkbox" 
+                           id="is_associado" 
+                           name="is_associado" 
+                           value="true"
+                           {{ 'checked' if (editando and editando.is_associado) or (valores and valores.is_associado) }}>
+                    <span>É associado AAPM (recebe 10% de desconto em compras)</span>
+                </label>
+            </div>
 
-        <button type="submit">
-            {{ "Salvar alterações" if editando else "Cadastrar cliente" }}
-        </button>
-        <a href="/clientes">Cancelar</a>
-    </form>
+            <div class="actions-group">
+                <button type="submit" class="btn-submit">
+                    {{ "Salvar alterações" if editando else "Cadastrar cliente" }}
+                </button>
+                <a href="/clientes" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
 </body>
 </html>

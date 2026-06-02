@@ -1,78 +1,363 @@
-<!-- templates/clientes/index.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
-<head><meta charset="UTF-8"><title>Clientes — AAPM SENAI</title></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            
+            /* Status e Alertas */
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --danger: #c62828;
+            --active-status: #155724;
+            --active-status-bg: #d4edda;
+            --inactive-status: #721c24;
+            --inactive-status-bg: #f8d7da;
+            
+            /* Info Box */
+            --info-bg: #e3f2fd;
+            --info-text: #0d47a1;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* --- ALERTAS E CARD DE INFORMAÇÃO --- */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .alert-success {
+            background-color: var(--success-bg);
+            color: var(--success);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+
+        .info-box {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        /* --- FORMULÁRIO DE FILTRO / BUSCA --- */
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .filter-form input[type="text"] {
+            flex: 1;
+            min-width: 250px;
+            padding: 9px 14px;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-form input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-filter {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .btn-filter:hover {
+            background-color: #333;
+        }
+
+        .btn-clear {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        .btn-clear:hover {
+            color: var(--danger);
+            text-decoration: underline;
+        }
+
+        /* --- BOTÕES E LINKS --- */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--primary);
+            color: #ffffff !important;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* --- TABELA --- */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover td {
+            background-color: #fcfcfc;
+        }
+
+        /* Tags/Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-active {
+            background-color: var(--active-status-bg);
+            color: var(--active-status);
+        }
+        .badge-inactive {
+            background-color: var(--inactive-status-bg);
+            color: var(--inactive-status);
+        }
+        .badge-associado {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid rgba(46,125,50,0.3);
+        }
+
+        /* Ações inline */
+        .actions-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-toggle {
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 0;
+        }
+        .btn-toggle:hover {
+            text-decoration: underline;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px !important;
+            font-style: italic;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
 <body>
-    <h1>Clientes</h1>
 
-    {% if request.query_params.get('criado') == 'ok' %}
-        <p style="color:green">Cliente cadastrado!</p>
-    {% endif %}
-    {% if request.query_params.get('editado') == 'ok' %}
-        <p style="color:green">Cliente atualizado!</p>
-    {% endif %}
+    <div class="container">
+        <h1>Clientes</h1>
 
-    <p>Associados ativos: <strong>{{ total_associados }}</strong></p>
-
-    <form method="get" action="/clientes">
-        <input type="text" name="busca"
-               placeholder="Buscar por nome ou matrícula..."
-               value="{{ busca }}">
-        <label>
-            <input type="checkbox" name="apenas_associados" value="true"
-                {{ 'checked' if apenas_associados }}>
-            Apenas associados
-        </label>
-        <button type="submit">Filtrar</button>
-        {% if busca or apenas_associados %}
-            <a href="/clientes">Limpar</a>
+        {% if request.query_params.get('criado') == 'ok' %}
+            <div class="alert alert-success">Cliente cadastrado com sucesso!</div>
         {% endif %}
-    </form>
+        {% if request.query_params.get('editado') == 'ok' %}
+            <div class="alert alert-success">Cliente atualizado com sucesso!</div>
+        {% endif %}
 
-    <a href="/clientes/novo">+ Novo cliente</a>
+        <div class="info-box">
+            Associados ativos: <strong>{{ total_associados }}</strong>
+        </div>
 
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Matrícula</th>
-                <th>Telefone</th>
-                <th>Associado</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in clientes %}
-            <tr>
-                <td>{{ c.nome }}</td>
-                <td>{{ c.matricula or "—" }}</td>
-                <td>{{ c.telefone or "—" }}</td>
-                <td>
-                    {% if c.is_associado %}
-                        <span style="color:green">✓ Sim (10% desc.)</span>
-                    {% else %}
-                        Não
-                    {% endif %}
-                </td>
-                <td>{{ "Ativo" if c.ativo else "Inativo" }}</td>
-                <td>
-                    <a href="/clientes/{{ c.id }}/editar">Editar</a>
-                    <form action="/clientes/{{ c.id }}/toggle-ativo"
-                          method="post" style="display:inline">
-                        <button type="submit">
-                            {{ "Desativar" if c.ativo else "Ativar" }}
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            {% if not clientes %}
-            <tr><td colspan="6" style="text-align:center">Nenhum cliente.</td></tr>
+        <form method="get" action="/clientes" class="filter-form">
+            <input type="text" 
+                   name="busca"
+                   placeholder="Buscar por nome ou matrícula..."
+                   value="{{ busca }}">
+            
+            <label class="checkbox-label">
+                <input type="checkbox" name="apenas_associados" value="true" {{ 'checked' if apenas_associados }}>
+                Apenas associados
+            </label>
+            
+            <button type="submit" class="btn-filter">Filtrar</button>
+            
+            {% if busca or apenas_associados %}
+                <a href="/clientes" class="btn-clear">Limpar</a>
             {% endif %}
-        </tbody>
-    </table>
+        </form>
 
-    <p><a href="/">← Dashboard</a></p>
+        <a href="/clientes/novo" class="btn-primary">+ Novo cliente</a>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>Telefone</th>
+                        <th>Associado</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in clientes %}
+                    <tr>
+                        <td><strong>{{ c.nome }}</strong></td>
+                        <td><code>{{ c.matricula or "—" }}</code></td>
+                        <td>{{ c.telefone or "—" }}</td>
+                        <td>
+                            {% if c.is_associado %}
+                                <span class="badge badge-associado">✓ Sim (10% desc.)</span>
+                            {% else %}
+                                <span style="color: var(--text-muted)">Não</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if c.ativo %}
+                                <span class="badge badge-active">Ativo</span>
+                            {% else %}
+                                <span class="badge badge-inactive">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="/clientes/{{ c.id }}/editar">Editar</a>
+                                <form action="/clientes/{{ c.id }}/toggle-ativo" method="post" style="display:inline">
+                                    <button type="submit" class="btn-toggle">
+                                        {{ "Desativar" if c.ativo else "Ativar" }}
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% if not clientes %}
+                    <tr>
+                        <td colspan="6" class="empty-row">Nenhum cliente encontrado.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <p><a href="/" class="back-link">← Voltar para o Dashboard</a></p>
+    </div>
+
 </body>
 </html>

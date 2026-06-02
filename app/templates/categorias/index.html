@@ -1,79 +1,269 @@
-<!-- templates/categorias/index.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categorias — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            
+            /* Status e Alertas */
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --danger: #c62828;
+            --danger-bg: #ffebee;
+            --active-status: #155724;
+            --active-status-bg: #d4edda;
+            --inactive-status: #721c24;
+            --inactive-status-bg: #f8d7da;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* --- ALERTAS / FEEDBACKS --- */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .alert-success {
+            background-color: var(--success-bg);
+            color: var(--success);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+        .alert-danger {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid rgba(198, 40, 40, 0.2);
+        }
+
+        /* --- BOTÕES E LINKS --- */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--primary);
+            color: #ffffff !important;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            text-decoration: none !important;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* --- TABELA ESTILIZADA --- */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover td {
+            background-color: #fcfcfc;
+        }
+
+        /* Tags de Status (Ativa/Inativa) */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-active {
+            background-color: var(--active-status-bg);
+            color: var(--active-status);
+        }
+        .badge-inactive {
+            background-color: var(--inactive-status-bg);
+            color: var(--inactive-status);
+        }
+
+        /* Botões de Ação dentro da Tabela */
+        .actions-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-toggle {
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 0;
+        }
+        .btn-toggle.activate {
+            color: var(--success);
+        }
+        .btn-toggle:hover {
+            text-decoration: underline;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px !important;
+            font-style: italic;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--text-muted);
+        }
+    </style>
 </head>
 <body>
-    <h1>Categorias</h1>
 
-    {% if request.query_params.get('criado') == 'ok' %}
-        <p style="color:green">Categoria criada com sucesso!</p>
-    {% endif %}
+    <div class="container">
+        <h1>Categorias</h1>
 
-    {% if request.query_params.get('editado') == 'ok' %}
-        <p style="color:green">Categoria atualizada com sucesso!</p>
-    {% endif %}
+        {% if request.query_params.get('criado') == 'ok' %}
+            <div class="alert alert-success">Categoria criada com sucesso!</div>
+        {% endif %}
 
-    {% if request.query_params.get('erro') == 'produtos_vinculados' %}
-        <p style="color:red">
-            Não é possível desativar "{{ request.query_params.get('categoria') }}"
-            pois ela possui produtos ativos vinculados.
-            Desative ou mova os produtos antes.
-        </p>
-    {% endif %}
+        {% if request.query_params.get('editado') == 'ok' %}
+            <div class="alert alert-success">Categoria atualizada com sucesso!</div>
+        {% endif %}
 
-    <a href="/categorias/nova">+ Nova categoria</a>
+        {% if request.query_params.get('erro') == 'produtos_vinculados' %}
+            <div class="alert alert-danger">
+                Não é possível desativar <strong>"{{ request.query_params.get('categoria') }}"</strong> 
+                pois ela possui produtos ativos vinculados. Desative ou mova os produtos antes.
+            </div>
+        {% endif %}
 
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Produtos ativos</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in categorias %}
-            <tr>
-                <td>{{ c.nome }}</td>
+        <a href="/categorias/nova" class="btn-primary">+ Nova categoria</a>
 
-                <!--
-                    c.produtos vem do relationship definido no model.
-                    Filtramos em Python para contar apenas os ativos.
-                -->
-                <td>
-                    {{ c.produtos | selectattr('ativo') | list | length }}
-                </td>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Produtos ativos</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in categorias %}
+                    <tr>
+                        <td><strong>{{ c.nome }}</strong></td>
+                        <td>{{ c.produtos | selectattr('ativo') | list | length }}</td>
+                        <td>
+                            {% if c.ativo %}
+                                <span class="badge badge-active">Ativa</span>
+                            {% else %}
+                                <span class="badge badge-inactive">Inativa</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="/categorias/{{ c.id }}/editar">Editar</a>
+                                
+                                <form action="/categorias/{{ c.id }}/toggle-ativo" method="post" style="display:inline">
+                                    <button type="submit" class="btn-toggle {{ 'deactivate' if c.ativo else 'activate' }}">
+                                        {{ "Desativar" if c.ativo else "Ativar" }}
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
 
-                <td>{{ "Ativa" if c.ativo else "Inativa" }}</td>
+                    {% if not categorias %}
+                    <tr>
+                        <td colspan="4" class="empty-row">
+                            Nenhuma categoria cadastrada.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
 
-                <td>
-                    <a href="/categorias/{{ c.id }}/editar">Editar</a>
+        <p><a href="/" class="back-link">← Voltar para Home</a></p>
+    </div>
 
-                    <form action="/categorias/{{ c.id }}/toggle-ativo"
-                          method="post"
-                          style="display:inline">
-                        <button type="submit">
-                            {{ "Desativar" if c.ativo else "Ativar" }}
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-
-            {% if not categorias %}
-            <tr>
-                <td colspan="4" style="text-align:center">
-                    Nenhuma categoria cadastrada.
-                </td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
-
-    <p><a href="/">← home</a></p>
 </body>
 </html>

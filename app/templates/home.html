@@ -3,15 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Estoque</title>
-    
+    <title>Dashboard — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e2e8f0;
+            
+            /* Perfil Badges */
+            --admin-color: #0066cc;
+            --admin-bg: rgba(0, 102, 204, 0.08);
+            --operador-color: #475569;
+            --operador-bg: #e2e8f0;
+            
+            --danger: #ef4444;
+            --danger-hover: #b91c1c;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 60px 20px;
+        }
+
+        .dashboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- CABEÇALHO BOAS-VINDAS --- */
+        .welcome-header {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #111111;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        /* Badges de Perfil de Acesso */
+        .badge-perfil {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: fit-content;
+        }
+
+        .badge-admin {
+            background-color: var(--admin-bg);
+            color: var(--admin-color);
+        }
+
+        .badge-operador {
+            background-color: var(--operador-bg);
+            color: var(--operador-color);
+        }
+
+        /* Botão Sair / Logout */
+        .btn-logout {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+            background: #ffffff;
+        }
+
+        .btn-logout:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+            background-color: #fff5f5;
+        }
+
+        /* --- GRADE DE MENUS/ATALHOS --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            text-decoration: none;
+            color: var(--text-main);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 15px rgba(0, 102, 204, 0.05);
+        }
+
+        .menu-card h3 {
+            font-size: 1.2rem;
+            color: #111111;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .menu-card .arrow-link {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
-    <h1>Olá, {{ usuario.nome }}</h1>
-    <p>Perfil: {{ usuario.role }}</p>
-    <br>
-    <a href="/usuarios">Tela de cadastro</a>
-    <br><br>
-    <a href="/auth/logout">Sair</a>
+
+    <div class="dashboard-container">
+        
+        <header class="welcome-header">
+            <div class="user-info">
+                <h1>Olá, {{ usuario.nome }}</h1>
+                {% if usuario.role == 'admin' %}
+                    <span class="badge-perfil badge-admin">Administrador</span>
+                {% else %}
+                    <span class="badge-perfil badge-operador">Operador</span>
+                {% endif %}
+            </div>
+            
+            <a href="/auth/logout" class="btn-logout">Sair do Sistema</a>
+        </header>
+
+        <main class="menu-grid">
+            
+            <a href="/produtos" class="menu-card">
+                <div>
+                    <h3>📦 Produtos</h3>
+                    <p>Gerencie o catálogo de itens, controle preços e saldos de estoque atuais.</p>
+                </div>
+                <div class="arrow-link">Acessar módulo &rarr;</div>
+            </a>
+
+            <a href="/usuarios" class="menu-card">
+                <div>
+                    <h3>👥 Usuários</h3>
+                    <p>Controle contas de acesso, perfis administrativos e permissões operacionais.</p>
+                </div>
+                <div class="arrow-link">Acessar módulo &rarr;</div>
+            </a>
+
+        </main>
+
+    </div>
+
 </body>
 </html>

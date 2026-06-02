@@ -1,83 +1,227 @@
-<!-- templates/usuarios/form.html--> 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <!--
-        editando é None na criação e o objeto Usuario na edição.
-        O template usa isso para adaptar título, action e campos.
-    -->
-    <title>{{ "Editar" if editando else "Novo" }} Usuário — Estoque</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ "Editar" if editando else "Novo" }} Usuário — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e2e8f0;
+            
+            /* Status */
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            color: #111111;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        /* --- ALERTAS --- */
+        .alerta-erro {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+        }
+
+        /* --- ESTRUTURA DO FORMULÁRIO --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fafafa;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            background-color: #ffffff;
+        }
+
+        /* Ajuste sutil para o placeholder do campo de senha na edição */
+        input::placeholder {
+            color: #a0aec0;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* --- CONTAINER DE BOTÕES / AÇÕES --- */
+        .form-acoes {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        button[type="submit"] {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.15);
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        .btn-cancelar {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .btn-cancelar:hover {
+            color: var(--danger);
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ "Editar usuário" if editando else "Novo usuário" }}</h1>
 
-    {% if erro %}
-        <p style="color: red;">{{ erro }}</p>
-    {% endif %}
+    <div class="container">
+        
+        <h1>{{ "Editar usuário" if editando else "Novo usuário" }}</h1>
 
-    <!--
-        action muda dinamicamente:
-        - criação → POST /usuarios/novo
-        - edição  → POST /usuarios/{id}/editar
-    -->
-    <form action="{{ '/usuarios/' + editando.id|string + '/editar' if editando else '/usuarios/novo' }}"
-          method="post">
+        {% if erro %}
+            <div class="alerta-erro">
+                ⚠️ {{ erro }}
+            </div>
+        {% endif %}
 
-        <label>Nome:
-            <!--
-                value recupera do objeto na edição,
-                ou do dicionário "valores" se houve erro na criação
-            -->
-            <input type="text"
-                   name="nome"
-                   value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
-                   required>
-        </label>
-        <br>
+        <form action="{{ '/usuarios/' + editando.id|string + '/editar' if editando else '/usuarios/novo' }}"
+              method="post">
 
-        <label>E-mail:
-            <input type="email"
-                   name="email"
-                   value="{{ editando.email if editando else (valores.email if valores else '') }}"
-                   required>
-        </label>
-        <br>
+            <div class="form-group">
+                <label for="nome">Nome Completo</label>
+                <input type="text"
+                       id="nome"
+                       name="nome"
+                       value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
+                       placeholder="Ex: João Silva"
+                       required>
+            </div>
 
-        <label>Senha:
-            <!--
-                Na edição o campo é opcional — deixar vazio mantém a senha atual.
-                Na criação é obrigatório.
-            -->
-            <input type="password"
-                   name="senha"
-                   {{ "placeholder='Deixe vazio para não alterar'" if editando else "required minlength='6'" }}>
-        </label>
-        <br>
+            <div class="form-group">
+                <label for="email">E-mail Corporativo</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       value="{{ editando.email if editando else (valores.email if valores else '') }}"
+                       placeholder="exemplo@senai.br"
+                       required>
+            </div>
 
-        <label>Perfil de acesso:
-            <select name="role">
-                <!--
-                    selected é definido comparando com o valor atual.
-                    Na criação usa "valores.role" se voltou com erro,
-                    senão deixa "operador" como padrão.
-                -->
-                <option value="operador"
-                    {{ 'selected' if (editando and editando.role == 'operador') or (valores and valores.role == 'operador') else '' }}>
-                    Operador
-                </option>
-                <option value="admin"
-                    {{ 'selected' if (editando and editando.role == 'admin') or (valores and valores.role == 'admin') else '' }}>
-                    Administrador
-                </option>
-            </select>
-        </label>
-        <br>
+            <div class="form-group">
+                <label for="senha">Senha de Acesso</label>
+                <input type="password"
+                       id="senha"
+                       name="senha"
+                       {{ "placeholder='Deixe vazio para não alterar'" if editando else "required minlength='6'" }}>
+            </div>
 
-        <button type="submit">
-            {{ "Salvar alterações" if editando else "Criar usuário" }}
-        </button>
-        <a href="/usuarios">Cancelar</a>
-    </form>
+            <div class="form-group">
+                <label for="role">Perfil de Acesso</label>
+                <select id="role" name="role">
+                    <option value="operador"
+                        {{ 'selected' if (editando and editando.role == 'operador') or (valores and valores.role == 'operador') else '' }}>
+                        Operador
+                    </option>
+                    <option value="admin"
+                        {{ 'selected' if (editando and editando.role == 'admin') or (valores and valores.role == 'admin') else '' }}>
+                        Administrador
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-acoes">
+                <a href="/usuarios" class="btn-cancelar">Cancelar</a>
+                <button type="submit">
+                    {{ "Salvar alterações" if editando else "Criar usuário" }}
+                </button>
+            </div>
+        </form>
+
+    </div>
+
 </body>
 </html>

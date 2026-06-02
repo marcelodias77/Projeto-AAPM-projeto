@@ -1,35 +1,221 @@
-<!-- produtos/detalhe.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ produto.nome }} — AAPM SENAI</title>
+    <style>
+        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        :root {
+            --primary: #0066cc;       /* Azul Institucional SENAI */
+            --primary-hover: #004da3;
+            --bg-body: #f4f6f9;       /* Fundo suave */
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e2e8f0;
+            
+            /* Status */
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* --- ALERTAS --- */
+        .alerta-sucesso {
+            background-color: var(--success-bg);
+            color: var(--success);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid rgba(46, 125, 50, 0.15);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* --- CARD DE DETALHES --- */
+        .produto-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .produto-header-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background-color: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .produto-conteudo {
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #111111;
+            margin-bottom: 6px;
+        }
+
+        .categoria-badge {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: var(--primary);
+            background-color: rgba(0, 102, 204, 0.08);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        /* --- TABELA TÉCNICA --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        tr {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 14px 0;
+            font-size: 1rem;
+        }
+
+        td strong {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .valor-destaque {
+            font-family: SFMono-Regular, Consolas, monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .valor-preco {
+            color: var(--primary);
+        }
+
+        /* --- AÇÕES / BOTÕES --- */
+        .acoes-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 5px;
+        }
+
+        a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--primary);
+        }
+
+        .btn-editar {
+            display: inline-block;
+            background-color: var(--primary);
+            color: #ffffff !important;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.15);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-editar:hover {
+            background-color: var(--primary-hover);
+            text-decoration: none;
+        }
+
+        .btn-editar:active {
+            transform: scale(0.98);
+        }
+    </style>
 </head>
 <body>
-    {% if request.query_params.get('editado') == 'ok' %}
-        <p style="color:green">Produto atualizado com sucesso!</p>
-    {% endif %}
 
-    <img src="{{ produto.imagem_url }}"
-         alt="{{ produto.nome }}"
-         width="200"
-         style="object-fit:cover">
+    <div class="container">
+        
+        {% if request.query_params.get('editado') == 'ok' %}
+            <div class="alerta-sucesso">
+                ✓ Produto atualizado com sucesso!
+            </div>
+        {% endif %}
 
-    <h1>{{ produto.nome }}</h1>
+        <article class="produto-card">
+            <img src="{{ produto.imagem_url }}" alt="{{ produto.nome }}" class="produto-header-img">
 
-    <p>Categoria: {{ produto.categoria.nome if produto.categoria else "—" }}</p>
+            <div class="produto-conteudo">
+                <h1>{{ produto.nome }}</h1>
+                <span class="categoria-badge">
+                    {{ produto.categoria.nome if produto.categoria else "Sem categoria" }}
+                </span>
 
-    <table border="1" cellpadding="8">
-        <tr><td><strong>Preço</strong></td>
-            <td>R$ {{ "%.2f"|format(produto.preco) }}</td></tr>
-        <tr><td><strong>Estoque atual</strong></td>
-            <td>{{ produto.estoque_atual }}</td></tr>
-    </table>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><strong>Preço de Venda</strong></td>
+                            <td class="valor-destaque valor-preco" style="text-align: right;">
+                                R$ {{ "%.2f"|format(produto.preco) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estoque Atual</strong></td>
+                            <td class="valor-destaque" style="text-align: right; color: #111;">
+                                {{ produto.estoque_atual }} un.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
 
-    {% if usuario.role == 'admin' %}
-        <a href="/produtos/{{ produto.id }}/editar">Editar</a>
-    {% endif %}
+        <div class="acoes-container">
+            <a href="/produtos">← Voltar para a listagem</a>
+            
+            {% if usuario.role == 'admin' %}
+                <a href="/produtos/{{ produto.id }}/editar" class="btn-editar">Editar Produto</a>
+            {% endif %}
+        </div>
 
-    <a href="/produtos">← Voltar</a>
+    </div>
+
 </body>
 </html>
