@@ -23,6 +23,7 @@
             
             --danger: #ef4444;
             --danger-hover: #b91c1c;
+            --sidebar-width: 260px;
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -37,12 +38,66 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             line-height: 1.6;
-            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* --- HOTBAR / SIDEBAR RESPONSIVA --- */
+        .hotbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            z-index: 100;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .hotbar-brand {
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 20px;
+            font-size: 1.1rem;
+            text-decoration: none;
+        }
+
+        .hotbar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .hotbar-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hotbar-link:hover, .hotbar-link.active {
+            background-color: var(--admin-bg);
+            color: var(--primary);
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
         .dashboard-container {
-            max-width: 800px;
+            width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 90px 20px 40px 20px; /* Espaço para a hotbar fixa */
         }
 
         /* --- CABEÇALHO BOAS-VINDAS --- */
@@ -59,7 +114,7 @@
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: #111111;
             font-weight: 700;
         }
@@ -84,7 +139,7 @@
 
         .badge-admin {
             background-color: var(--admin-bg);
-            color: var(--admin-color);
+            color: var(--primary);
         }
 
         .badge-operador {
@@ -114,7 +169,7 @@
         /* --- GRADE DE MENUS/ATALHOS --- */
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
 
@@ -130,6 +185,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            min-height: 180px;
         }
 
         .menu-card:hover {
@@ -159,9 +215,66 @@
             color: var(--primary);
             text-align: right;
         }
+
+        /* --- DESIGN RESPONSIVO PARA TELAS GRANDES (SIDEBAR) --- */
+        @media (min-width: 992px) {
+            body {
+                flex-direction: row;
+                padding: 0;
+            }
+
+            .hotbar {
+                width: var(--sidebar-width);
+                height: 100vh;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 30px 20px;
+                border-bottom: none;
+                border-right: 1px solid var(--border-color);
+                position: fixed;
+                white-space: normal;
+            }
+
+            .hotbar-brand {
+                margin-bottom: 30px;
+                margin-right: 0;
+                font-size: 1.3rem;
+            }
+
+            .hotbar-nav {
+                flex-direction: column;
+                width: 100%;
+                gap: 4px;
+            }
+
+            .hotbar-link {
+                width: 100%;
+                padding: 12px 16px;
+            }
+
+            .dashboard-container {
+                margin-left: var(--sidebar-width);
+                padding: 40px;
+                max-width: calc(100vw - var(--sidebar-width));
+            }
+        }
     </style>
 </head>
 <body>
+
+    <nav class="hotbar">
+        <a href="#" class="hotbar-brand">AAPM SENAI</a>
+        <div class="hotbar-nav">
+            <a href="/pdv" class="hotbar-link">🖥️ PDV</a>
+            <a href="/produtos" class="hotbar-link">📦 Produtos</a>
+            <a href="/categorias" class="hotbar-link">🏷️ Categorias</a>
+            <a href="/movimentacoes" class="hotbar-link">🔄 Movimentações</a>
+            <a href="/clientes" class="hotbar-link">🤝 Clientes</a>
+            {% if usuario.role == 'admin' %}
+                <a href="/usuarios" class="hotbar-link">👥 Usuários</a>
+            {% endif %}
+        </div>
+    </nav>
 
     <div class="dashboard-container">
         
@@ -180,6 +293,14 @@
 
         <main class="menu-grid">
             
+            <a href="/pdv" class="menu-card">
+                <div>
+                    <h3>🖥️ Frente de Caixa (PDV)</h3>
+                    <p>Realize vendas rápidas, emita cupons e faça a abertura e fechamento do caixa diário.</p>
+                </div>
+                <div class="arrow-link">Acessar módulo &rarr;</div>
+            </a>
+
             <a href="/produtos" class="menu-card">
                 <div>
                     <h3>📦 Produtos</h3>
@@ -188,6 +309,31 @@
                 <div class="arrow-link">Acessar módulo &rarr;</div>
             </a>
 
+            <a href="/categorias" class="menu-card">
+                <div>
+                    <h3>🏷️ Categorias</h3>
+                    <p>Organize seus produtos por departamentos, grupos e subgrupos para relatórios precisos.</p>
+                </div>
+                <div class="arrow-link">Acessar módulo &rarr;</div>
+            </a>
+
+            <a href="/movimentacoes" class="menu-card">
+                <div>
+                    <h3>🔄 Movimentações</h3>
+                    <p>Registre entradas de fornecedores, ajustes de inventário e perdas de estoque.</p>
+                </div>
+                <div class="arrow-link">Acessar módulo &rarr;</div>
+            </a>
+
+            <a href="/clientes" class="menu-card">
+                <div>
+                    <h3>🤝 Clientes</h3>
+                    <p>Cadastre alunos, professores e colaboradores para controle de vendas e contas.</p>
+                </div>
+                <div class="arrow-link">Acessar módulo &rarr;</div>
+            </a>
+
+            {% if usuario.role == 'admin' %}
             <a href="/usuarios" class="menu-card">
                 <div>
                     <h3>👥 Usuários</h3>
@@ -195,6 +341,7 @@
                 </div>
                 <div class="arrow-link">Acessar módulo &rarr;</div>
             </a>
+            {% endif %}
 
         </main>
 
