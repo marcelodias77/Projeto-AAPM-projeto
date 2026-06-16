@@ -5,28 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — AAPM SENAI</title>
     <style>
-        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        /* --- DESIGN SYSTEM MODERNIZADO --- */
         :root {
-            --primary: #0066cc;       /* Azul Institucional SENAI */
-            --primary-hover: #004da3;
-            --bg-body: #f4f6f9;       /* Fundo suave */
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e2e8f0;
+            --primary: #0066cc;
+            --primary-light: #e6f0fa;
+            --primary-dark: #004da3;
+            --bg-base: #0f172a;       /* Dark slate moderníssimo */
+            --bg-surface: #1e293b;    /* Cards e Sidebar */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
             
-            /* Perfil Badges */
-            --admin-color: #0066cc;
-            --admin-bg: rgba(0, 102, 204, 0.08);
-            --operador-color: #475569;
-            --operador-bg: #e2e8f0;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.15);
             
-            --danger: #ef4444;
-            --danger-hover: #b91c1c;
-            --sidebar-width: 260px;
+            --sidebar-width: 280px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* --- CONFIGURAÇÕES GERAIS --- */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -34,317 +34,451 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
-            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* --- HOTBAR / SIDEBAR RESPONSIVA --- */
-        .hotbar {
-            background-color: #ffffff;
+        /* --- KEYFRAMES PARA AS ANIMAÇÕES DE ENTRADA --- */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- SIDEBAR / NAV CENTRALIZADA --- */
+        .sidebar {
+            background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
+            height: 70px;
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            overflow-x: auto;
-            white-space: nowrap;
+            justify-content: space-between;
+            padding: 0 24px;
             z-index: 100;
-            gap: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            
+            /* Animação na barra superior */
+            animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
-        .hotbar-brand {
-            font-weight: 700;
-            color: var(--primary);
-            margin-right: 20px;
-            font-size: 1.1rem;
-            text-decoration: none;
-        }
-
-        .hotbar-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .hotbar-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s;
+        .brand-box {
             display: flex;
             align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            color: white;
+            font-weight: 800;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            display: none; /* Mobile usa a grade principal */
             gap: 6px;
         }
 
-        .hotbar-link:hover, .hotbar-link.active {
-            background-color: var(--admin-bg);
-            color: var(--primary);
-        }
-
-        /* --- LAYOUT PRINCIPAL --- */
-        .dashboard-container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 90px 20px 40px 20px; /* Espaço para a hotbar fixa */
-        }
-
-        /* --- CABEÇALHO BOAS-VINDAS --- */
-        .welcome-header {
-            background: var(--bg-card);
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 1.6rem;
-            color: #111111;
-            font-weight: 700;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        /* Badges de Perfil de Acesso */
-        .badge-perfil {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            width: fit-content;
-        }
-
-        .badge-admin {
-            background-color: var(--admin-bg);
-            color: var(--primary);
-        }
-
-        .badge-operador {
-            background-color: var(--operador-bg);
-            color: var(--operador-color);
-        }
-
-        /* Botão Sair / Logout */
-        .btn-logout {
+        .nav-link {
             color: var(--text-muted);
             text-decoration: none;
             font-size: 0.9rem;
-            font-weight: 600;
-            padding: 8px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            transition: all 0.2s;
-            background: #ffffff;
-        }
-
-        .btn-logout:hover {
-            color: var(--danger);
-            border-color: var(--danger);
-            background-color: #fff5f5;
-        }
-
-        /* --- GRADE DE MENUS/ATALHOS --- */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .menu-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 24px;
-            text-decoration: none;
-            color: var(--text-main);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 180px;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 15px rgba(0, 102, 204, 0.05);
-        }
-
-        .menu-card h3 {
-            font-size: 1.2rem;
-            color: #111111;
-            margin-bottom: 8px;
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .menu-card p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 15px;
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
         }
 
-        .menu-card .arrow-link {
+        /* --- ÁREA PRINCIPAL --- */
+        .main-content {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 100px 24px 40px 24px;
+            flex-grow: 1;
+        }
+
+        /* --- HEADER DO PERFIL --- */
+        .profile-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            
+            /* Animação do card de perfil */
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.1s;
+        }
+
+        .profile-card::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: var(--primary);
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .user-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-placeholder {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .user-greeting h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .role-admin { background-color: var(--success-bg); color: var(--success); }
+        .role-operator { background-color: rgba(148, 163, 184, 0.1); color: var(--text-muted); }
+
+        .btn-logout {
+            align-self: flex-start;
+            color: var(--danger);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            background: var(--danger-bg);
+            text-decoration: none;
             font-size: 0.88rem;
             font-weight: 600;
-            color: var(--primary);
-            text-align: right;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* --- DESIGN RESPONSIVO PARA TELAS GRANDES (SIDEBAR) --- */
-        @media (min-width: 992px) {
+        .btn-logout:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* --- CARDS DE MÓDULOS --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card-item {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            
+            /* Configuração padrão da animação dos cards */
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* --- EFEITO STAGGER (Atraso cascata para cada card) --- */
+        .card-item:nth-child(1) { animation-delay: 0.15s; }
+        .card-item:nth-child(2) { animation-delay: 0.22s; }
+        .card-item:nth-child(3) { animation-delay: 0.29s; }
+        .card-item:nth-child(4) { animation-delay: 0.36s; }
+        .card-item:nth-child(5) { animation-delay: 0.43s; }
+        .card-item:nth-child(6) { animation-delay: 0.50s; }
+
+        .card-item:hover {
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0,0,0,0.4);
+        }
+
+        .card-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .card-item:hover .card-icon-wrapper {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .card-item h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-item p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .card-action {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-item:hover .card-action {
+            color: var(--text-main);
+        }
+
+        /* --- RESPONSIVIDADE PARA TELAS GRANDES (GRID/SIDEBAR LATERAL) --- */
+        @media (min-width: 1024px) {
             body {
                 flex-direction: row;
-                padding: 0;
             }
 
-            .hotbar {
+            .sidebar {
                 width: var(--sidebar-width);
                 height: 100vh;
                 flex-direction: column;
+                justify-content: space-between;
                 align-items: flex-start;
-                padding: 30px 20px;
+                padding: 40px 24px;
                 border-bottom: none;
                 border-right: 1px solid var(--border-color);
                 position: fixed;
-                white-space: normal;
+                /* Altera animação na versão desktop para surgir da esquerda */
+                animation: none; 
+                opacity: 1;
             }
 
-            .hotbar-brand {
-                margin-bottom: 30px;
-                margin-right: 0;
-                font-size: 1.3rem;
-            }
-
-            .hotbar-nav {
+            .nav-menu {
+                display: flex;
                 flex-direction: column;
                 width: 100%;
-                gap: 4px;
+                margin-top: 40px;
+                flex-grow: 1;
             }
 
-            .hotbar-link {
-                width: 100%;
-                padding: 12px 16px;
-            }
-
-            .dashboard-container {
+            .main-content {
                 margin-left: var(--sidebar-width);
-                padding: 40px;
+                padding: 50px 60px;
                 max-width: calc(100vw - var(--sidebar-width));
+            }
+
+            .profile-card {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 32px;
+            }
+
+            .btn-logout {
+                align-self: center;
             }
         }
     </style>
 </head>
 <body>
 
-    <nav class="hotbar">
-        <a href="#" class="hotbar-brand">AAPM SENAI</a>
-        <div class="hotbar-nav">
-            <a href="/pdv" class="hotbar-link">💻 PDV</a>
-            <a href="/produtos" class="hotbar-link">📦 Produtos</a>
-            <a href="/categorias" class="hotbar-link">🏷️ Categorias</a>
-            <a href="/movimentacoes" class="hotbar-link">🔁 Movimentações</a>
-            <a href="/clientes" class="hotbar-link">🙎‍♂️ Clientes</a>
-            {% if usuario.role == 'admin' %}
-                <a href="/usuarios" class="hotbar-link">👥 Usuários</a>
-            {% endif %}
-        </div>
-    </nav>
-
-    <div class="dashboard-container">
+    <aside class="sidebar">
+        <a href="#" class="brand-box">
+            <div class="brand-logo">S</div>
+            <span class="brand-name">AAPM SENAI</span>
+        </a>
         
-        <header class="welcome-header">
-            <div class="user-info">
-                <h1>Olá, {{ usuario.nome }}</h1>
-                {% if usuario.role == 'admin' %}
-                    <span class="badge-perfil badge-admin">Administrador</span>
-                {% else %}
-                    <span class="badge-perfil badge-operador">Operador</span>
-                {% endif %}
+        <nav class="nav-menu">
+            <a href="/pdv" class="nav-link">💻 PDV</a>
+            <a href="/produtos" class="nav-link">📦 Produtos</a>
+            <a href="/categorias" class="nav-link">🏷️ Categorias</a>
+            <a href="/movimentacoes" class="nav-link">🔁 Movimentações</a>
+            <a href="/clientes" class="nav-link">🙎‍♂️ Clientes</a>
+            {% if usuario.role == 'admin' %}
+                <a href="/usuarios" class="nav-link">👥 Usuários</a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        
+        <header class="profile-card">
+            <div class="user-meta">
+                <div class="avatar-placeholder">👤</div>
+                <div class="user-greeting">
+                    <h1>Olá, {{ usuario.nome }}</h1>
+                    {% if usuario.role == 'admin' %}
+                        <span class="role-badge role-admin">● Administrador</span>
+                    {% else %}
+                        <span class="role-badge role-operator">● Operador do Caixa</span>
+                    {% endif %}
+                </div>
             </div>
             
-            <a href="/auth/logout" class="btn-logout">Sair do Sistema</a>
+            <a href="/auth/logout" class="btn-logout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                Sair do Sistema
+            </a>
         </header>
 
-        <main class="menu-grid">
+        <main class="cards-grid">
             
-            <a href="/pdv" class="menu-card">
+            <a href="/pdv" class="card-item">
                 <div>
-                    <h3>💻 Frente de Caixa (PDV)</h3>
-                    <p>Realize vendas rápidas, emita cupons e faça a abertura e fechamento do caixa diário.</p>
+                    <div class="card-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <h3>Frente de Caixa (PDV)</h3>
+                    <p>Realize vendas rápidas, emita cupons e faça a abertura e fechamento do caixa diário de forma simplificada.</p>
                 </div>
-                <div class="arrow-link">Acessar módulo &rarr;</div>
+                <div class="card-action">Acessar PDV &rarr;</div>
             </a>
 
-            <a href="/produtos" class="menu-card">
+            <a href="/produtos" class="card-item">
                 <div>
-                    <h3>📦 Produtos</h3>
-                    <p>Gerencie o catálogo de itens, controle preços e saldos de estoque atuais.</p>
+                    <div class="card-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <h3>Produtos</h3>
+                    <p>Gerencie o catálogo completo de itens disponíveis, configure preços de venda e visualize saldos atuais.</p>
                 </div>
-                <div class="arrow-link">Acessar módulo &rarr;</div>
+                <div class="card-action">Gerenciar itens &rarr;</div>
             </a>
 
-            <a href="/categorias" class="menu-card">
+            <a href="/categorias" class="card-item">
                 <div>
-                    <h3>🏷️ Categorias</h3>
-                    <p>Organize seus produtos por departamentos, grupos e subgrupos para relatórios precisos.</p>
+                    <div class="card-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    </div>
+                    <h3>Categorias</h3>
+                    <p>Organize seus produtos por departamentos, marcas ou grupos para otimizar a extração de relatórios estatísticos.</p>
                 </div>
-                <div class="arrow-link">Acessar módulo &rarr;</div>
+                <div class="card-action">Organizar grupos &rarr;</div>
             </a>
 
-            <a href="/movimentacoes" class="menu-card">
+            <a href="/movimentacoes" class="card-item">
                 <div>
-                    <h3>🔁 Movimentações</h3>
-                    <p>Registre entradas de fornecedores, ajustes de inventário e perdas de estoque.</p>
+                    <div class="card-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                    </div>
+                    <h3>Movimentações</h3>
+                    <p>Registre a entrada de novos insumos de fornecedores, ajustes manuais de inventário físico ou perdas registradas.</p>
                 </div>
-                <div class="arrow-link">Acessar módulo &rarr;</div>
+                <div class="card-action">Lançar estoque &rarr;</div>
             </a>
 
-            <a href="/clientes" class="menu-card">
+            <a href="/clientes" class="card-item">
                 <div>
-                    <h3>🙎‍♂️ Clientes</h3>
-                    <p>Cadastre alunos, professores e colaboradores para controle de vendas e contas.</p>
+                    <div class="card-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>Clientes</h3>
+                    <p>Cadastre alunos, professores, servidores e associados da comunidade para conceder descontos e aplicar contas.</p>
                 </div>
-                <div class="arrow-link">Acessar módulo &rarr;</div>
+                <div class="card-action">Ver clientes &rarr;</div>
             </a>
 
             {% if usuario.role == 'admin' %}
-            <a href="/usuarios" class="menu-card">
+            <a href="/usuarios" class="card-item">
                 <div>
-                    <h3>👥 Usuários</h3>
-                    <p>Controle contas de acesso, perfis administrativos e permissões operacionais.</p>
+                    <div class="card-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h3>Usuários e Permissões</h3>
+                    <p>Controle as credenciais de acesso ao sistema, crie novos operadores de caixa e audite privilégios administrativos.</p>
                 </div>
-                <div class="arrow-link">Acessar módulo &rarr;</div>
+                <div class="card-action">Gerenciar acessos &rarr;</div>
             </a>
             {% endif %}
 
         </main>
-
     </div>
 
 </body>

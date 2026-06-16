@@ -5,23 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nova Movimentação — AAPM SENAI</title>
     <style>
-        /* --- VARIÁVEIS DE CORES --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM) --- */
         :root {
-            --primary: #0066cc;       /* Azul Institucional SENAI */
-            --primary-hover: #004da3;
-            --bg-body: #f4f6f9;       /* Fundo suave */
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #dcdcdc;
+            --primary: #0066cc;
+            --primary-gradient: linear-gradient(135deg, #0066cc, #3b82f6);
+            --bg-base: #0f172a;       /* Fundo escuro slate */
+            --bg-surface: rgba(30, 41, 59, 0.7); /* Vidro fosco card */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
             
             /* Status e Alertas */
-            --danger: #c62828;
-            --danger-bg: #ffebee;
-            --success: #2e7d32;
-            --success-light: #e8f5e9;
-            --info-bg: #e3f2fd;
-            --info-text: #0d47a1;
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.15);
+            --danger-border: rgba(244, 63, 94, 0.3);
+            
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --success-border: rgba(16, 185, 129, 0.25);
+
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.12);
+            --warning-border: rgba(245, 158, 11, 0.3);
+            
+            --radius-xl: 20px;
+            --radius-md: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -32,161 +41,200 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             line-height: 1.6;
-            padding: 40px 20px;
+            padding: 40px 24px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
         }
 
+        /* Iluminação radial de fundo */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            filter: blur(160px);
+            opacity: 0.12;
+            bottom: -150px;
+            right: -150px;
+            pointer-events: none;
+        }
+
+        /* --- CONTAINER PRINCIPAL (GLASSMORPHISM) --- */
         .container {
             max-width: 650px;
-            margin: 0 auto;
-            background: var(--bg-card);
-            padding: 40px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            background-color: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 40px 36px;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            z-index: 10;
         }
 
         h1 {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 12px;
+            font-size: 1.65rem;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 28px;
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
         }
 
         /* --- ALERTAS --- */
         .alert-danger {
-            padding: 14px 18px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            font-size: 0.9rem;
             font-weight: 500;
             background-color: var(--danger-bg);
             color: var(--danger);
-            border: 1px solid rgba(198, 40, 40, 0.25);
+            border: 1px solid var(--danger-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* --- ESTILIZAÇÃO DO FORMULÁRIO --- */
+        /* --- FORMULÁRIO --- */
         .form-group {
             margin-bottom: 22px;
         }
 
         label.field-label {
             display: block;
+            font-size: 0.78rem;
             font-weight: 600;
+            color: var(--text-muted);
             margin-bottom: 8px;
-            color: var(--text-main);
-            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Inputs e Selects padronizados */
         input[type="text"],
         input[type="number"],
         select {
             width: 100%;
-            padding: 12px 16px;
-            font-size: 1rem;
+            padding: 13px 16px;
+            font-size: 0.95rem;
             font-family: inherit;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: #fafafa;
             color: var(--text-main);
-            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: rgba(15, 23, 42, 0.4);
+            transition: var(--transition);
+            outline: none;
         }
 
         input[type="text"]:focus,
         input[type="number"]:focus,
         select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.15);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Força fundo escuro nativo nas opções do select */
+        select option {
+            background-color: #1e293b;
+            color: var(--text-main);
         }
 
         /* --- CARDS INFORMATIVOS DINÂMICOS --- */
         .status-card {
             padding: 14px 16px;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            border-radius: var(--radius-md);
+            font-size: 0.92rem;
             margin-top: -10px;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 8px;
-            animation: slideDown 0.2s ease-out;
+            gap: 10px;
+            animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card-stock {
-            background-color: #f1f3f5;
-            color: #495057;
-            border: 1px solid #ced4da;
+            background-color: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0;
+            border: 1px solid var(--border-color);
         }
 
         .card-subtotal {
-            background-color: var(--success-light);
-            color: var(--success);
-            border: 1px solid rgba(46, 125, 50, 0.2);
-            font-size: 1.1rem;
+            background-color: var(--success-bg);
+            color: #a7f3d0;
+            border: 1px solid var(--success-border);
+            font-size: 1.05rem;
         }
 
-        /* --- BOTÕES DE AÇÃO --- */
+        /* --- BOTÕES E AÇÕES --- */
         .actions-group {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            gap: 20px;
-            margin-top: 35px;
+            gap: 16px;
+            margin-top: 32px;
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
         }
 
         .btn-submit {
-            background-color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-gradient);
             color: #ffffff;
-            padding: 12px 26px;
+            padding: 13px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0, 102, 204, 0.2);
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.25);
+            transition: var(--transition);
         }
 
         .btn-submit:hover {
-            background-color: var(--primary-hover);
-            box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+            transform: translateY(-1px);
         }
 
         .btn-submit:active {
-            transform: scale(0.98);
+            transform: translateY(1px);
         }
 
         .btn-cancel {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: color 0.2s;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: var(--transition);
+            padding: 8px 12px;
         }
 
         .btn-cancel:hover {
-            color: #111111;
-            text-decoration: underline;
+            color: var(--text-main);
         }
 
-        /* --- ANIMAÇÕES E MOBILE --- */
+        /* --- ANIMAÇÕES E RESPONSIVIDADE --- */
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 480px) {
-            body { padding: 15px 10px; }
-            .container { padding: 25px 20px; border-radius: 8px; }
+            body { padding: 16px 12px; }
+            .container { padding: 30px 20px; }
             .actions-group {
                 flex-direction: column-reverse;
                 align-items: stretch;
@@ -202,7 +250,10 @@
         <h1>Registrar movimentação</h1>
 
         {% if erro %}
-            <div class="alert alert-danger">{{ erro }}</div>
+            <div class="alert alert-danger">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {{ erro }}
+            </div>
         {% endif %}
 
         <form action="/movimentacoes/nova" method="post">
@@ -223,7 +274,7 @@
             </div>
 
             <div id="info-estoque" class="status-card card-stock" style="display:none">
-                ℹ️ Estoque atual deste produto: <strong id="valor-estoque">0</strong> unidades.
+                <span id="icone-estoque">ℹ️</span> Estoque atual deste produto: <strong id="valor-estoque">0</strong> unidades.
             </div>
 
             <div class="form-group">
@@ -260,11 +311,11 @@
             </div>
 
             <div id="info-subtotal" class="status-card card-subtotal" style="display:none">
-                💰 Valor Total do Lote: <strong id="valor-subtotal">R$ 0,00</strong>
+                <span>💰</span> Valor Total do Lote: <strong id="valor-subtotal">R$ 0,00</strong>
             </div>
 
             <div class="form-group">
-                <label for="observacao" class="field-label">Observação <span style="font-weight: normal; color: var(--text-muted);">(opcional)</span></label>
+                <label for="observacao" class="field-label">Observação <span style="font-weight: normal; color: var(--text-muted); text-transform: lowercase;">(opcional)</span></label>
                 <input type="text"
                        id="observacao"
                        name="observacao"
@@ -285,10 +336,10 @@
         const inputPreco     = document.getElementById('input-preco');
         const infoEstoque    = document.getElementById('info-estoque');
         const valorEstoque   = document.getElementById('valor-estoque');
+        const iconeEstoque   = document.getElementById('icone-estoque');
         const infoSubtotal   = document.getElementById('info-subtotal');
         const valorSubtotal  = document.getElementById('valor-subtotal');
 
-        // Ao selecionar produto: mostra estoque atual e preenche preço
         selectProduto.addEventListener('change', function () {
             const option = this.options[this.selectedIndex];
             const estoque = option.dataset.estoque;
@@ -296,18 +347,22 @@
 
             if (estoque !== undefined && this.value !== "") {
                 valorEstoque.textContent = estoque;
-                infoEstoque.style.display = 'flex'; // Mudado para flex para alinhar o ícone
+                infoEstoque.style.display = 'flex'; 
 
-                // Alerta visual extra caso o estoque esteja zerado
+                // Alerta dinâmico se o estoque estiver zerado no padrão Dark Premium
                 if (parseInt(estoque) === 0) {
-                    infoEstoque.style.backgroundColor = '#fff3cd';
-                    infoEstoque.style.color = '#856404';
-                    infoEstoque.style.borderColor = '#ffeeba';
+                    infoEstoque.style.backgroundColor = 'var(--warning-bg)';
+                    infoEstoque.style.color = '#fcd34d'; /* Amarelo ouro suave */
+                    infoEstoque.style.borderColor = 'var(--warning-border)';
+                    iconeEstoque.textContent = '⚠️';
                 } else {
+                    // Reseta para o padrão estilizado do CSS
+                    infoEstoque.removeAttribute('style');
+                    infoEstoque.style.display = 'flex';
                     infoEstoque.className = "status-card card-stock";
+                    iconeEstoque.textContent = 'ℹ️';
                 }
 
-                // Pré-preenche o preço unitário com o preço cadastrado
                 inputPreco.value = parseFloat(preco).toFixed(2);
             } else {
                 infoEstoque.style.display = 'none';
@@ -316,7 +371,6 @@
             atualizarSubtotal();
         });
 
-        // Atualiza o subtotal ao digitar quantidade ou preço
         function atualizarSubtotal() {
             const qtd   = parseFloat(inputQuantidade.value) || 0;
             const preco = parseFloat(inputPreco.value) || 0;

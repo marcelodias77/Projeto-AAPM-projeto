@@ -1,33 +1,169 @@
-<!-- templantes/pdv/comprovante.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Comprovante #{{ venda.id }} — AAPM SENAI</title>
     <style>
-        body { font-family: 'Courier New', monospace; max-width: 400px;
-               margin: 40px auto; background: #f8fafc; color: #1e293b; }
-        .cupom { background: #fff; border: 1px solid #e2e8f0;
-                 border-radius: 12px; padding: 28px; }
-        .titulo { text-align: center; font-weight: 700;
-                  font-size: 18px; margin-bottom: 4px; }
-        .subtitulo { text-align: center; color: #64748b;
-                     font-size: 12px; margin-bottom: 20px; }
-        .linha-sep { border: none; border-top: 1px dashed #e2e8f0;
-                     margin: 14px 0; }
-        .item-linha { display: flex; justify-content: space-between;
-                      font-size: 13px; margin-bottom: 6px; }
-        .item-desc { color: #64748b; font-size: 11px; margin-bottom: 8px; }
-        .total-linha { display: flex; justify-content: space-between;
-                       font-size: 13px; margin-bottom: 6px; color: #64748b; }
-        .total-final { display: flex; justify-content: space-between;
-                       font-size: 18px; font-weight: 800; margin-top: 10px; }
-        .desc-linha { color: #16a34a; }
-        .btn { display: block; text-align: center; margin-top: 20px;
-               padding: 12px; border-radius: 8px; font-weight: 700;
-               font-size: 14px; text-decoration: none; }
-        .btn-nova { background: #1e293b; color: #fff; }
-        .btn-hist  { background: #f1f5f9; color: #1e293b; margin-top: 8px; }
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM / GLASSMORPHIC) --- */
+        :root {
+            --bg-base: #0f172a;           /* Fundo escuro slate */
+            --bg-surface: rgba(30, 41, 59, 0.7); /* Vidro fosco para os botões/fundo */
+            --bg-cupom: #1e293b;          /* Fundo do cupom (papel escuro premium) */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            
+            --success: #10b981;           /* Verde neon suave para descontos */
+            --primary-gradient: linear-gradient(135deg, #0066cc, #3b82f6);
+            
+            --radius-xl: 20px;
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- CONFIGURAÇÕES GERAIS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; 
+            max-width: 420px;
+            margin: 40px auto; 
+            background: var(--bg-base); 
+            color: var(--text-main); 
+            padding: 0 20px;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Iluminação radial de fundo para dar profundidade ao ecossistema */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: #0066cc;
+            filter: blur(120px);
+            opacity: 0.15;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* --- O CUPOM FISCAL --- */
+        .cupom { 
+            background: var(--bg-cupom); 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-xl); 
+            padding: 32px 28px; 
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        .titulo { 
+            text-align: center; 
+            font-weight: 800;
+            font-size: 20px; 
+            margin-bottom: 6px; 
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .subtitulo { 
+            text-align: center; 
+            color: var(--text-muted);
+            font-size: 12px; 
+            margin-bottom: 24px; 
+        }
+
+        /* Linha pontilhada estilizada estilo cupom */
+        .linha-sep { 
+            border: none; 
+            border-top: 1px dashed var(--border-color);
+            margin: 16px 0; 
+        }
+
+        .item-linha { 
+            display: flex; 
+            justify-content: space-between;
+            font-size: 13px; 
+            margin-bottom: 4px; 
+            color: var(--text-main);
+        }
+
+        .item-desc { 
+            color: var(--text-muted); 
+            font-size: 11px; 
+            margin-bottom: 12px; 
+        }
+
+        .total-linha { 
+            display: flex; 
+            justify-content: space-between;
+            font-size: 13px; 
+            margin-bottom: 8px; 
+            color: var(--text-muted); 
+        }
+
+        .total-final { 
+            display: flex; 
+            justify-content: space-between;
+            font-size: 20px; 
+            font-weight: 800; 
+            margin-top: 14px; 
+            color: #ffffff;
+        }
+
+        /* Descontos e Badges positivos */
+        .desc-linha { 
+            color: var(--success); 
+        }
+
+        /* --- BOTÕES DE AÇÃO --- */
+        .btn { 
+            display: block; 
+            text-align: center; 
+            padding: 14px; 
+            border-radius: var(--radius-md); 
+            font-weight: 700;
+            font-size: 14px; 
+            text-decoration: none; 
+            transition: var(--transition);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* Fonte legível para interface */
+        }
+
+        .btn-nova { 
+            background: var(--primary-gradient); 
+            color: #ffffff; 
+            margin-top: 24px;
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
+        }
+
+        .btn-nova:hover {
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .btn-hist { 
+            background: rgba(255, 255, 255, 0.04); 
+            color: var(--text-main); 
+            margin-top: 10px; 
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-hist:hover { 
+            background: rgba(255, 255, 255, 0.08); 
+            color: #ffffff;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
     </style>
 </head>
 <body>
@@ -84,7 +220,7 @@
 
         {% if venda.observacao %}
         <hr class="linha-sep">
-        <div style="font-size:12px; color:#64748b">{{ venda.observacao }}</div>
+        <div style="font-size:12px; color: var(--text-muted); line-height: 1.4;">{{ venda.observacao }}</div>
         {% endif %}
     </div>
 

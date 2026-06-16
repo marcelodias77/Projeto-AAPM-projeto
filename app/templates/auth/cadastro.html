@@ -1,23 +1,35 @@
+<!-- templates/cadastro.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta — AAPM SENAI</title>
+    <!-- Fontes Inter e Share Tech Mono para manter o padrão -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM) --- */
         :root {
-            --primary: #0066cc;       /* Azul Institucional SENAI */
-            --primary-hover: #004da3;
-            --bg-body: #f4f6f9;       /* Fundo suave */
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e2e8f0;
+            --primary: #0066cc;
+            --primary-gradient: linear-gradient(135deg, #0066cc, #3b82f6);
+            --glitch-red: #ff003c;    /* Vermelho do glitch */
+            --bg-base: #0f172a;       /* Dark slate moderno */
+            --bg-surface: #1e293b;    /* Card Central */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
             
             /* Status */
-            --danger: #ef4444;
-            --danger-bg: #fee2e2;
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.15);
+            --danger-border: rgba(244, 63, 94, 0.3);
+            
+            --radius-xl: 20px;
+            --radius-md: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -28,68 +40,137 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* --- CARD DE CADASTRO --- */
+        /* Iluminação ambiente de fundo sincronizada */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: var(--primary);
+            filter: blur(150px);
+            opacity: 0.12;
+            top: -100px;
+            left: -100px;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: var(--glitch-red);
+            filter: blur(150px);
+            opacity: 0.08;
+            bottom: -100px;
+            right: -100px;
+            pointer-events: none;
+        }
+
+        /* --- CARD DE CADASTRO (GLASSMORPHISM) --- */
         .cadastro-card {
-            background: var(--bg-card);
-            max-width: 400px;
+            background-color: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            max-width: 440px;
             width: 100%;
-            padding: 35px 30px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 48px 36px;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .logo-header {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
+        /* --- ANIMAÇÃO GLITCH ACELERADA NAS LETRAS --- */
+        .header-box {
             text-align: center;
+            margin-bottom: 32px;
         }
 
-        h1 {
-            font-size: 1.5rem;
-            color: #111111;
+        .system-tag {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
             font-weight: 700;
-            margin-bottom: 25px;
-            text-align: center;
+            color: #ffffff; /* AAPM SENAI em branco */
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            position: relative;
+            display: inline-block;
+            animation: textGlitch 1.5s infinite linear alternate-reverse;
         }
+
+        /* Máscaras de corte digitais */
+        .system-tag::before, .system-tag::after,
+        .glitch-title::before, .glitch-title::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: #172237; /* Recorta sobre a cor interna do card */
+        }
+
+        .system-tag::before { clip: rect(10px, 9999px, 15px, 0); animation: glitch-anim 1.5s infinite linear alternate-reverse; }
+        .system-tag::after { clip: rect(2px, 9999px, 8px, 0); animation: glitch-anim2 1.2s infinite linear alternate-reverse; }
+
+        .glitch-title {
+            font-size: 1.75rem;
+            color: var(--text-main);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+            animation: textGlitch 2s infinite linear alternate-reverse;
+        }
+
+        .glitch-title::before { clip: rect(20px, 9999px, 25px, 0); animation: glitch-anim 2s infinite linear alternate-reverse; }
+        .glitch-title::after { clip: rect(5px, 9999px, 15px, 0); animation: glitch-anim2 1.5s infinite linear alternate-reverse; }
 
         /* --- ALERTAS DE ERRO --- */
         .alerta-erro {
             background-color: var(--danger-bg);
             color: var(--danger);
-            padding: 12px 14px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+            border: 1px solid var(--danger-border);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
             font-size: 0.9rem;
             font-weight: 500;
-            border: 1px solid rgba(239, 68, 68, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: alertPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
         /* --- FORMULÁRIO --- */
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -98,53 +179,87 @@
         input[type="email"],
         input[type="password"] {
             width: 100%;
-            padding: 11px 14px;
+            padding: 13px 16px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             font-size: 0.95rem;
             color: var(--text-main);
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background-color: #fafafa;
+            transition: var(--transition);
+            background-color: rgba(15, 23, 42, 0.4);
         }
 
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-            background-color: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+            background-color: var(--bg-base);
         }
 
-        /* Botão de Envio */
+        /* --- BOTÃO CADASTRAR (EFEITO CYBER-SHINE & PULSE) --- */
         button[type="submit"] {
-            display: block;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             width: 100%;
-            background-color: var(--primary);
+            background: var(--primary-gradient);
             color: #ffffff;
             border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
+            padding: 14px 24px;
+            border-radius: var(--radius-md);
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 4px 6px rgba(0, 102, 204, 0.15);
-            margin-top: 25px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
+            margin-top: 16px;
         }
 
+        /* Feixe de luz reflexivo interno */
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: skewX(-25deg);
+            transition: none;
+        }
+
+        /* Efeitos no Hover */
         button[type="submit"]:hover {
-            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.6), 
+                        0 0 8px rgba(255, 0, 60, 0.4);
+            filter: brightness(1.1);
+            animation: buttonGlitchTremor 0.2s linear infinite;
+        }
+
+        button[type="submit"]:hover::before {
+            animation: shineSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
         button[type="submit"]:active {
-            transform: scale(0.99);
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.4);
         }
 
         /* Rodapé do Card */
         .card-footer {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 32px;
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
             font-size: 0.9rem;
@@ -152,28 +267,90 @@
         }
 
         .card-footer a {
-            color: var(--primary);
+            color: #3b82f6;
             text-decoration: none;
             font-weight: 600;
+            transition: var(--transition);
         }
 
         .card-footer a:hover {
+            color: var(--text-main);
             text-decoration: underline;
+        }
+
+        /* --- KEYFRAMES --- */
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes alertPop {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shineSweep {
+            0% { left: -150%; }
+            50% { left: 150%; }
+            100% { left: 150%; }
+        }
+
+        @keyframes buttonGlitchTremor {
+            0% { transform: translateY(-2px) translateX(0); }
+            25% { transform: translateY(-2px) translateX(0.5px); }
+            50% { transform: translateY(-1.5px) translateX(-0.5px); }
+            75% { transform: translateY(-2.5px) translateX(0); }
+            100% { transform: translateY(-2px) translateX(0); }
+        }
+
+        @keyframes textGlitch {
+            0% { text-shadow: 1.5px 0 0 var(--glitch-red), -1.5px 0 0 #00f0ff; }
+            4% { text-shadow: -3px 0 0 var(--glitch-red), 3px 0 0 #00f0ff; }
+            8% { text-shadow: 1.5px 0 0 var(--glitch-red), -1.5px 0 0 #00f0ff; }
+            100% { text-shadow: 1px 0 0 var(--glitch-red), -1px 0 0 #00f0ff; }
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(12px, 9999px, 25px, 0); transform: skew(0.3deg); }
+            10% { clip: rect(30px, 9999px, 5px, 0); transform: skew(-0.5deg); }
+            20% { clip: rect(8px, 9999px, 42px, 0); transform: skew(0.8deg); }
+            30% { clip: rect(38px, 9999px, 15px, 0); transform: skew(-0.2deg); }
+            40% { clip: rect(25px, 9999px, 35px, 0); transform: skew(1deg); }
+            50% { clip: rect(3px, 9999px, 14px, 0); transform: skew(-0.7deg); }
+            60% { clip: rect(18px, 9999px, 28px, 0); transform: skew(0.4deg); }
+            100% { clip: rect(10px, 9999px, 22px, 0); transform: skew(0deg); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(5px, 9999px, 18px, 0); transform: translateX(-1px); }
+            15% { clip: rect(42px, 9999px, 32px, 0); transform: translateX(2px); }
+            30% { clip: rect(2px, 9999px, 15px, 0); transform: translateX(-2px); }
+            45% { clip: rect(15px, 9999px, 45px, 0); transform: translateX(1px); }
+            60% { clip: rect(28px, 9999px, 20px, 0); transform: translateX(-1px); }
+            100% { clip: rect(5px, 9999px, 12px, 0); transform: translateX(0); }
         }
     </style>
 </head>
 <body>
 
     <div class="cadastro-card">
-        <div class="logo-header">AAPM SENAI</div>
-        <h1>Criar Nova Conta</h1>
+        
+        <!-- Cabeçalho com Atributos data-text habilitados -->
+        <div class="header-box">
+            <div class="system-tag" data-text="AAPM SENAI">AAPM SENAI</div>
+            <br>
+            <h1 class="glitch-title" data-text="Criar Nova Conta">Criar Nova Conta</h1>
+        </div>
 
+        <!-- Alerta de Erros -->
         {% if erro %}
             <div class="alerta-erro">
-                ⚠️ {{ erro }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {{ erro }}
             </div>
         {% endif %}
 
+        <!-- Formulário -->
         <form action="/auth/cadastro" method="post">
             
             <div class="form-group">
@@ -207,6 +384,7 @@
             <button type="submit">Cadastrar Conta</button>
         </form>
 
+        <!-- Rodapé para alternar páginas -->
         <div class="card-footer">
             Já tem uma conta? <a href="/auth/login">Entrar</a>
         </div>

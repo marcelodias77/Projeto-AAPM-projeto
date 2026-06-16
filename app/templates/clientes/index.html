@@ -5,28 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes — AAPM SENAI</title>
     <style>
-        /* --- VARIÁVEIS DE CORES --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM) --- */
         :root {
-            --primary: #0066cc;       /* Azul Institucional SENAI */
-            --primary-hover: #004da3;
-            --bg-body: #f4f6f9;       /* Fundo suave */
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e0e0e0;
+            --primary: #0066cc;
+            --primary-gradient: linear-gradient(135deg, #0066cc, #3b82f6);
+            --bg-base: #0f172a;       /* Fundo escuro slate */
+            --bg-surface: rgba(30, 41, 59, 0.7); /* Vidro fosco card */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
             
             /* Status e Alertas */
-            --success: #2e7d32;
-            --success-bg: #e8f5e9;
-            --danger: #c62828;
-            --active-status: #155724;
-            --active-status-bg: #d4edda;
-            --inactive-status: #721c24;
-            --inactive-status-bg: #f8d7da;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --success-border: rgba(16, 185, 129, 0.3);
             
-            /* Info Box */
-            --info-bg: #e3f2fd;
-            --info-text: #0d47a1;
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.15);
+            --danger-border: rgba(244, 63, 94, 0.3);
+            
+            --info: #38bdf8;
+            --info-bg: rgba(56, 189, 248, 0.1);
+            --info-border: rgba(56, 189, 248, 0.25);
+            
+            --radius-xl: 20px;
+            --radius-md: 12px;
+            --radius-sm: 6px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -37,152 +42,204 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             line-height: 1.6;
-            padding: 40px 20px;
+            padding: 40px 24px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
         }
 
+        /* Iluminação de fundo customizada */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            filter: blur(180px);
+            opacity: 0.1;
+            top: -150px;
+            left: -150px;
+            pointer-events: none;
+        }
+
+        /* --- CONTAINER MESTRE (GLASSMORPHISM) --- */
         .container {
             max-width: 1100px;
-            margin: 0 auto;
-            background: var(--bg-card);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            background-color: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 40px 36px;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            z-index: 10;
         }
 
         h1 {
             font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
         }
 
-        /* --- ALERTAS E CARD DE INFORMAÇÃO --- */
+        /* --- ALERTAS E INDICADORES --- */
         .alert {
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            font-size: 0.9rem;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid transparent;
         }
         .alert-success {
             background-color: var(--success-bg);
             color: var(--success);
-            border: 1px solid rgba(46, 125, 50, 0.2);
+            border-color: var(--success-border);
         }
 
         .info-box {
             background-color: var(--info-bg);
-            color: var(--info-text);
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-            display: inline-block;
+            color: var(--info);
+            border: 1px solid var(--info-border);
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* --- FORMULÁRIO DE FILTRO / BUSCA --- */
+        /* --- BLOCO DE BUSCA E FILTROS --- */
         .filter-form {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 15px;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
+            gap: 16px;
+            background-color: rgba(15, 23, 42, 0.4);
+            padding: 20px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         .filter-form input[type="text"] {
             flex: 1;
-            min-width: 250px;
-            padding: 9px 14px;
+            min-width: 280px;
+            padding: 11px 16px;
             font-size: 0.95rem;
+            color: var(--text-main);
+            background-color: rgba(15, 23, 42, 0.5);
             border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border-radius: var(--radius-md);
             outline: none;
-            transition: border-color 0.2s;
+            transition: var(--transition);
         }
 
         .filter-form input[type="text"]:focus {
-            border-color: var(--primary);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
         }
 
         .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
+            color: var(--text-main);
             cursor: pointer;
             user-select: none;
         }
 
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
         .btn-filter {
-            background-color: #555;
-            color: #fff;
+            background-color: #334155;
+            color: #ffffff;
             border: none;
-            padding: 9px 16px;
-            border-radius: 5px;
+            padding: 11px 22px;
+            border-radius: var(--radius-md);
             font-weight: 600;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: background 0.2s;
+            transition: var(--transition);
         }
 
         .btn-filter:hover {
-            background-color: #333;
+            background-color: #475569;
         }
 
         .btn-clear {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-left: 4px;
         }
         .btn-clear:hover {
             color: var(--danger);
             text-decoration: underline;
         }
 
-        /* --- BOTÕES E LINKS --- */
+        /* --- LINKS E BOTÕES MESTRES --- */
         a {
-            color: var(--primary);
+            color: #3b82f6;
             text-decoration: none;
-            transition: color 0.2s;
+            transition: var(--transition);
         }
         a:hover {
-            color: var(--primary-hover);
+            color: var(--text-main);
             text-decoration: underline;
         }
 
         .btn-primary {
-            display: inline-block;
-            background-color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary-gradient);
             color: #ffffff !important;
-            padding: 10px 18px;
-            border-radius: 6px;
+            padding: 12px 22px;
+            border-radius: var(--radius-md);
             font-weight: 600;
             font-size: 0.9rem;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
-            transition: background 0.2s, transform 0.1s;
+            margin-bottom: 28px;
+            text-decoration: none !important;
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.25);
+            transition: var(--transition);
         }
         .btn-primary:hover {
-            background-color: var(--primary-hover);
-        }
-        .btn-primary:active {
-            transform: scale(0.98);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+            transform: translateY(-1px);
         }
 
-        /* --- TABELA --- */
+        /* --- TABELA DARK E ACABAMENTO --- */
         .table-responsive {
             overflow-x: auto;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: rgba(15, 23, 42, 0.3);
         }
 
         table {
@@ -193,50 +250,68 @@
         }
 
         th, td {
-            padding: 14px 16px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border-color);
         }
 
+        tr:last-child td {
+            border-bottom: none;
+        }
+
         th {
-            background-color: #f8f9fa;
+            background-color: rgba(15, 23, 42, 0.6);
             color: var(--text-muted);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
         }
 
         tr:hover td {
-            background-color: #fcfcfc;
+            background-color: rgba(255, 255, 255, 0.03);
         }
 
-        /* Tags/Badges */
-        .badge {
-            display: inline-block;
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background-color: rgba(255, 255, 255, 0.06);
             padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            border-radius: var(--radius-sm);
+            color: #e2e8f0;
+            font-size: 0.88rem;
+        }
+
+        /* Badges Minimalistas */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .badge-active {
-            background-color: var(--active-status-bg);
-            color: var(--active-status);
+            background-color: var(--success-bg);
+            color: var(--success);
+            border: 1px solid var(--success-border);
         }
         .badge-inactive {
-            background-color: var(--inactive-status-bg);
-            color: var(--inactive-status);
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid var(--danger-border);
         }
         .badge-associado {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid rgba(46,125,50,0.3);
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
         }
 
-        /* Ações inline */
+        /* Célula de Ações */
         .actions-cell {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
         }
 
         .btn-toggle {
@@ -244,25 +319,39 @@
             border: none;
             font-family: inherit;
             font-size: 0.95rem;
-            color: var(--danger);
             cursor: pointer;
             padding: 0;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .btn-toggle.deactivate {
+            color: var(--danger);
+        }
+        .btn-toggle.activate {
+            color: var(--success);
         }
         .btn-toggle:hover {
             text-decoration: underline;
+            filter: brightness(1.2);
         }
 
         .empty-row {
             text-align: center;
             color: var(--text-muted);
-            padding: 30px !important;
+            padding: 40px !important;
             font-style: italic;
         }
 
         .back-link {
-            display: inline-block;
-            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
             color: var(--text-muted);
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: var(--text-main);
         }
     </style>
 </head>
@@ -271,17 +360,27 @@
     <div class="container">
         <h1>Clientes</h1>
 
+        <!-- Alertas Dinâmicos -->
         {% if request.query_params.get('criado') == 'ok' %}
-            <div class="alert alert-success">Cliente cadastrado com sucesso!</div>
+            <div class="alert alert-success">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Cliente cadastrado com sucesso!
+            </div>
         {% endif %}
         {% if request.query_params.get('editado') == 'ok' %}
-            <div class="alert alert-success">Cliente atualizado com sucesso!</div>
+            <div class="alert alert-success">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Cliente atualizado com sucesso!
+            </div>
         {% endif %}
 
+        <!-- Box Informativo Superior -->
         <div class="info-box">
-            Associados ativos: <strong>{{ total_associados }}</strong>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Associados ativos: <strong>{{ total_associados }}</strong></span>
         </div>
 
+        <!-- Bloco de Filtros -->
         <form method="get" action="/clientes" class="filter-form">
             <input type="text" 
                    name="busca"
@@ -296,12 +395,14 @@
             <button type="submit" class="btn-filter">Filtrar</button>
             
             {% if busca or apenas_associados %}
-                <a href="/clientes" class="btn-clear">Limpar</a>
+                <a href="/clientes" class="btn-clear">Limpar filtros</a>
             {% endif %}
         </form>
 
+        <!-- Botão Novo -->
         <a href="/clientes/novo" class="btn-primary">+ Novo cliente</a>
 
+        <!-- Grid de Clientes -->
         <div class="table-responsive">
             <table>
                 <thead>
@@ -317,14 +418,20 @@
                 <tbody>
                     {% for c in clientes %}
                     <tr>
-                        <td><strong>{{ c.nome }}</strong></td>
-                        <td><code>{{ c.matricula or "—" }}</code></td>
+                        <td><strong style="color: var(--text-main);">{{ c.nome }}</strong></td>
+                        <td>
+                            {% if c.matricula %}
+                                <code>{{ c.matricula }}</code>
+                            {% else %}
+                                <span style="color: var(--text-muted);">—</span>
+                            {% endif %}
+                        </td>
                         <td>{{ c.telefone or "—" }}</td>
                         <td>
                             {% if c.is_associado %}
                                 <span class="badge badge-associado">✓ Sim (10% desc.)</span>
                             {% else %}
-                                <span style="color: var(--text-muted)">Não</span>
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">Não</span>
                             {% endif %}
                         </td>
                         <td>
@@ -338,7 +445,7 @@
                             <div class="actions-cell">
                                 <a href="/clientes/{{ c.id }}/editar">Editar</a>
                                 <form action="/clientes/{{ c.id }}/toggle-ativo" method="post" style="display:inline">
-                                    <button type="submit" class="btn-toggle">
+                                    <button type="submit" class="btn-toggle {{ 'deactivate' if c.ativo else 'activate' }}">
                                         {{ "Desativar" if c.ativo else "Ativar" }}
                                     </button>
                                 </form>
@@ -356,6 +463,7 @@
             </table>
         </div>
 
+        <!-- Link Voltar -->
         <p><a href="/" class="back-link">← Voltar para o Dashboard</a></p>
     </div>
 

@@ -4,20 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ "Editar" if editando else "Novo" }} Usuário — AAPM SENAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK MODE) --- */
         :root {
             --primary: #0066cc;       /* Azul Institucional SENAI */
             --primary-hover: #004da3;
-            --bg-body: #f4f6f9;       /* Fundo suave */
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e2e8f0;
+            --bg-base: #0f172a;       /* Fundo Dark Slate idêntico ao Dashboard */
+            --bg-surface: #1e293b;    /* Fundo do Card */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
             
             /* Status */
-            --danger: #ef4444;
-            --danger-bg: #fee2e2;
+            --danger: #f43f5e;
+            --danger-bg: rgba(244, 63, 94, 0.15);
+            
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -28,29 +36,55 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
-            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Suporte para navegação via teclado (Acessibilidade) */
+        a:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 4px;
         }
 
         .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: var(--bg-card);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-surface);
+            padding: 36px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Brilho sutil de fundo característico do primeiro layout */
+        .container::after {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 130px;
+            height: 130px;
+            background: var(--primary);
+            filter: blur(70px);
+            opacity: 0.2;
+            pointer-events: none;
         }
 
         h1 {
-            font-size: 1.6rem;
-            color: #111111;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 12px;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
         }
 
         /* --- ALERTAS --- */
@@ -58,11 +92,18 @@
             background-color: var(--danger-bg);
             color: var(--danger);
             padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
             font-weight: 500;
-            font-size: 0.95rem;
-            border: 1px solid rgba(239, 68, 68, 0.15);
+            font-size: 0.9rem;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alerta-erro svg {
+            flex-shrink: 0;
         }
 
         /* --- ESTRUTURA DO FORMULÁRIO --- */
@@ -72,12 +113,12 @@
 
         label {
             display: block;
-            font-size: 0.88rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
         }
 
         input[type="text"],
@@ -85,30 +126,38 @@
         input[type="password"],
         select {
             width: 100%;
-            padding: 10px 14px;
+            padding: 12px 14px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             font-size: 0.95rem;
+            font-family: inherit;
             color: var(--text-main);
+            transition: var(--transition);
+            background-color: rgba(15, 23, 42, 0.4); /* Fundo dark translúcido */
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background-color: #fafafa;
+        }
+
+        /* Setinha customizada para o Select no Tema Dark */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+            padding-right: 40px;
         }
 
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus,
         select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-            background-color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.4);
+            background-color: rgba(15, 23, 42, 0.8);
         }
 
-        /* Ajuste sutil para o placeholder do campo de senha na edição */
         input::placeholder {
-            color: #a0aec0;
-            font-style: italic;
-            font-size: 0.9rem;
+            color: #475569;
         }
 
         /* --- CONTAINER DE BOTÕES / AÇÕES --- */
@@ -116,9 +165,9 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 15px;
-            margin-top: 30px;
-            padding-top: 15px;
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 20px;
             border-top: 1px solid var(--border-color);
         }
 
@@ -126,33 +175,37 @@
             background-color: var(--primary);
             color: #ffffff;
             border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-size: 0.95rem;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-size: 0.92rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.15);
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
         }
 
         button[type="submit"]:hover {
             background-color: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
         button[type="submit"]:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
 
         .btn-cancelar {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: var(--transition);
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
         }
 
         .btn-cancelar:hover {
             color: var(--danger);
+            background-color: var(--danger-bg);
         }
     </style>
 </head>
@@ -164,12 +217,12 @@
 
         {% if erro %}
             <div class="alerta-erro">
-                ⚠️ {{ erro }}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                {{ erro }}
             </div>
         {% endif %}
 
-        <form action="{{ '/usuarios/' + editando.id|string + '/editar' if editando else '/usuarios/novo' }}"
-              method="post">
+        <form action="{{ '/usuarios/' + editando.id|string + '/editar' if editando else '/usuarios/novo' }}" method="post">
 
             <div class="form-group">
                 <label for="nome">Nome Completo</label>
@@ -196,7 +249,7 @@
                 <input type="password"
                        id="senha"
                        name="senha"
-                       {{ "placeholder='Deixe vazio para não alterar'" if editando else "required minlength='6'" }}>
+                       {{ "placeholder='Deixe vazio para não alterar'" if editando else "required minlength='6' placeholder='No mínimo 6 caracteres'" }}>
             </div>
 
             <div class="form-group">

@@ -5,19 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ produto.nome }} — AAPM SENAI</title>
     <style>
-        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM / GLASSMORPHISM) --- */
         :root {
-            --primary: #0066cc;       /* Azul Institucional SENAI */
-            --primary-hover: #004da3;
-            --bg-body: #f4f6f9;       /* Fundo suave */
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e2e8f0;
+            --bg-base: #0f172a;           /* Fundo ultra escuro */
+            --bg-surface: rgba(30, 41, 59, 0.4); /* Vidro fosco para o container */
+            --bg-card: #1e293b;           /* Fundo do bloco de conteúdo */
+            --border-color: #334155;      /* Bordas sutis */
+            --text-main: #f8fafc;         /* Texto principal */
+            --text-muted: #94a3b8;        /* Texto secundário */
             
-            /* Status */
-            --success: #2e7d32;
-            --success-bg: #e8f5e9;
+            --primary: #0066cc;           /* Azul SENAI */
+            --primary-hover: #1d4ed8;
+            --success: #10b981;           /* Verde neon para sucesso e valores */
+            --success-bg: rgba(16, 185, 129, 0.15);
+
+            --radius-xl: 16px;
+            --radius-md: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -28,79 +32,105 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             line-height: 1.6;
             padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Ambient glow de fundo */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: var(--primary);
+            filter: blur(140px);
+            opacity: 0.08;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 1;
         }
 
         .container {
-            max-width: 650px;
+            max-width: 600px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
 
         /* --- ALERTAS --- */
         .alerta-sucesso {
             background-color: var(--success-bg);
-            color: var(--success);
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+            color: #a7f3d0;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
             font-weight: 600;
             font-size: 0.95rem;
-            border: 1px solid rgba(46, 125, 50, 0.15);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* --- CARD DE DETALHES --- */
         .produto-card {
-            background: var(--bg-card);
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-color);
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .produto-header-img {
             width: 100%;
-            height: 250px;
+            height: 280px;
             object-fit: cover;
-            background-color: #fafafa;
+            background-color: #0f172a;
             border-bottom: 1px solid var(--border-color);
         }
 
         .produto-conteudo {
-            padding: 30px;
+            padding: 32px;
         }
 
         h1 {
             font-size: 1.8rem;
-            color: #111111;
-            margin-bottom: 6px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
         }
 
         .categoria-badge {
             display: inline-block;
-            font-size: 0.85rem;
-            color: var(--primary);
-            background-color: rgba(0, 102, 204, 0.08);
-            padding: 4px 12px;
+            font-size: 0.8rem;
+            color: #93c5fd;
+            background-color: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 4px 14px;
             border-radius: 999px;
             font-weight: 600;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         /* --- TABELA TÉCNICA --- */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
         }
 
         tr {
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         tr:last-child {
@@ -108,7 +138,7 @@
         }
 
         td {
-            padding: 14px 0;
+            padding: 16px 0;
             font-size: 1rem;
         }
 
@@ -120,11 +150,11 @@
         .valor-destaque {
             font-family: SFMono-Regular, Consolas, monospace;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
 
         .valor-preco {
-            color: var(--primary);
+            color: var(--success);
         }
 
         /* --- AÇÕES / BOTÕES --- */
@@ -132,40 +162,41 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 10px;
-            padding: 0 5px;
+            padding: 0 4px;
         }
 
         a {
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.2s;
+            font-size: 0.95rem;
+            transition: var(--transition);
         }
 
         a:hover {
-            color: var(--primary);
+            color: var(--text-main);
         }
 
         .btn-editar {
             display: inline-block;
-            background-color: var(--primary);
+            background: linear-gradient(135deg, #0066cc, #1d4ed8);
             color: #ffffff !important;
-            padding: 8px 20px;
-            border-radius: 6px;
+            padding: 10px 24px;
+            border-radius: var(--radius-md);
             font-weight: 600;
             font-size: 0.9rem;
-            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.15);
-            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
+            transition: var(--transition);
         }
 
         .btn-editar:hover {
-            background-color: var(--primary-hover);
-            text-decoration: none;
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.45);
+            transform: translateY(-1px);
         }
 
         .btn-editar:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -198,7 +229,7 @@
                         </tr>
                         <tr>
                             <td><strong>Estoque Atual</strong></td>
-                            <td class="valor-destaque" style="text-align: right; color: #111;">
+                            <td class="valor-destaque" style="text-align: right; color: var(--text-main);">
                                 {{ produto.estoque_atual }} un.
                             </td>
                         </tr>

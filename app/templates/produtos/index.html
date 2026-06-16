@@ -5,21 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produtos — AAPM SENAI</title>
     <style>
-        /* --- VARIÁVEIS DE CORES INSTITUCIONAIS --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM / GLASSMORPHISM) --- */
         :root {
-            --primary: #0066cc;       /* Azul Institucional SENAI */
-            --primary-hover: #004da3;
-            --bg-body: #f4f6f9;       /* Fundo suave */
-            --bg-card: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e2e8f0;
+            --bg-base: #0f172a;           /* Fundo ultra escuro */
+            --bg-surface: rgba(30, 41, 59, 0.4); /* Vidro fosco para cards e tabelas */
+            --bg-input: #0f172a;          /* Fundo dos campos de filtro */
+            --border-color: #334155;      /* Bordas sutis */
+            --text-main: #f8fafc;         /* Texto principal */
+            --text-muted: #94a3b8;        /* Texto secundário */
             
-            /* Status */
-            --success: #2e7d32;
-            --success-bg: #e8f5e9;
-            --danger: #ef4444;
-            --danger-hover: #b91c1c;
+            --primary: #0066cc;           /* Azul SENAI */
+            --primary-hover: #1d4ed8;
+            --success: #10b981;           /* Verde neon para sucesso e valores */
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --danger: #ef4444;            /* Vermelho para alertas/ações destrutivas */
+            --danger-hover: #f87171;
+
+            --radius-xl: 16px;
+            --radius-md: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -30,16 +34,35 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
             color: var(--text-main);
             line-height: 1.6;
             padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Ambient glow de fundo */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            filter: blur(160px);
+            opacity: 0.05;
+            top: 5%;
+            right: 10%;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .container {
             max-width: 1100px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
 
         /* --- CABEÇALHO DA PÁGINA --- */
@@ -47,69 +70,85 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         h1 {
             font-size: 1.8rem;
-            color: #111111;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
         }
 
         /* --- ALERTAS DE SUCESSO --- */
         .alerta-sucesso {
             background-color: var(--success-bg);
-            color: var(--success);
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+            color: #a7f3d0;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
             font-weight: 600;
             font-size: 0.95rem;
-            border: 1px solid rgba(46, 125, 50, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* --- SEÇÃO DE FILTROS --- */
         .filtros-card {
-            background: var(--bg-card);
-            padding: 16px 20px;
-            border-radius: 8px;
+            background: var(--bg-surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 18px 22px;
+            border-radius: var(--radius-xl);
             border: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.3);
         }
 
         .filtros-form {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             flex-wrap: wrap;
         }
 
         .filtros-form input[type="text"],
         .filtros-form select {
-            padding: 8px 14px;
+            padding: 10px 16px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             font-size: 0.9rem;
+            color: var(--text-main);
             outline: none;
-            background-color: #fafafa;
-            min-width: 200px;
-            transition: border-color 0.2s;
+            background-color: var(--bg-input);
+            min-width: 220px;
+            transition: var(--transition);
         }
 
         .filtros-form input[type="text"]:focus,
         .filtros-form select:focus {
-            border-color: var(--primary);
-            background-color: #fff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Customização sutil da seta do select no dark mode */
+        .filtros-form select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
         }
 
         /* --- BOTÕES E LINKS DE AÇÃO --- */
         button[type="submit"], .btn-novo {
-            padding: 8px 18px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: var(--transition);
             border: none;
             text-decoration: none;
             display: inline-flex;
@@ -117,29 +156,33 @@
         }
 
         button[type="submit"] {
-            background-color: #e2e8f0;
+            background-color: rgba(255, 255, 255, 0.08);
             color: var(--text-main);
+            border: 1px solid var(--border-color);
         }
 
         button[type="submit"]:hover {
-            background-color: #cbd5e1;
+            background-color: rgba(255, 255, 255, 0.15);
         }
 
         .btn-novo {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, #0066cc, #1d4ed8);
             color: #ffffff !important;
-            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.15);
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
         }
 
         .btn-novo:hover {
-            background-color: var(--primary-hover);
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.45);
+            transform: translateY(-1px);
         }
 
         .btn-limpar {
             font-size: 0.9rem;
             color: var(--text-muted);
             text-decoration: none;
-            margin-left: 5px;
+            margin-left: 6px;
+            transition: var(--transition);
         }
 
         .btn-limpar:hover {
@@ -148,12 +191,14 @@
 
         /* --- TABELA GERENCIAL --- */
         .tabela-container {
-            background: var(--bg-card);
-            border-radius: 8px;
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-xl);
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.4);
             overflow: hidden;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         table {
@@ -163,19 +208,19 @@
         }
 
         th {
-            background-color: #f8fafc;
+            background-color: rgba(15, 23, 42, 0.3);
             color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.85rem;
+            font-weight: 700;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 14px 20px;
-            border-bottom: 2px solid var(--border-color);
+            letter-spacing: .06em;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         td {
-            padding: 12px 20px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 14px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.95rem;
             vertical-align: middle;
         }
@@ -184,11 +229,15 @@
             border-bottom: none;
         }
 
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
         /* Estilização interna da tabela */
         .img-produto-tabela {
-            border-radius: 4px;
+            border-radius: 6px;
             border: 1px solid var(--border-color);
-            background-color: #f1f5f9;
+            background-color: #0f172a;
             display: block;
         }
 
@@ -196,31 +245,35 @@
             color: var(--text-main);
             text-decoration: none;
             font-weight: 600;
+            transition: var(--transition);
         }
 
         .link-produto:hover {
-            color: var(--primary);
+            color: #3b82f6;
         }
 
         .col-preco {
             font-family: SFMono-Regular, Consolas, monospace;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--success);
         }
 
         .col-estoque {
-            font-weight: 500;
+            font-weight: 600;
         }
 
         /* Botões de Ação na Tabela */
         .btn-tabela-editar {
-            color: var(--primary);
+            color: #3b82f6;
             text-decoration: none;
             font-weight: 600;
             font-size: 0.88rem;
-            margin-right: 12px;
+            margin-right: 16px;
+            transition: var(--transition);
         }
 
         .btn-tabela-editar:hover {
+            color: #60a5fa;
             text-decoration: underline;
         }
 
@@ -231,6 +284,7 @@
             font-weight: 600;
             font-size: 0.88rem;
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .btn-tabela-desativar:hover {
@@ -244,10 +298,11 @@
             text-decoration: none;
             font-weight: 500;
             display: inline-block;
+            transition: var(--transition);
         }
 
         .link-voltar:hover {
-            color: var(--primary);
+            color: var(--text-main);
         }
     </style>
 </head>
@@ -298,7 +353,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 80px;">Imagem</th>
+                        <th style="width: 90px;">Imagem</th>
                         <th>Nome do Produto</th>
                         <th>Categoria</th>
                         <th>Preço</th>
@@ -328,7 +383,7 @@
                         <td class="col-preco">
                             R$ {{ "%.2f"|format(p.preco) }}
                         </td>
-                        <td class="col-estoque" style="color: {{ 'var(--danger)' if p.estoque_atual == 0 else 'inherit' }};">
+                        <td class="col-estoque" style="color: {{ 'var(--danger)' if p.estoque_atual == 0 else 'var(--text-main)' }};">
                             {{ p.estoque_atual }} un.
                         </td>
                         {% if usuario.role == 'admin' %}
@@ -347,7 +402,7 @@
 
                     {% if not produtos %}
                     <tr>
-                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px;">
                             🔍 Nenhum produto correspondente aos filtros foi encontrado.
                         </td>
                     </tr>
